@@ -16,13 +16,7 @@
         .modal-overlay { background-color: rgba(0, 0, 0, 0.5); z-index: 999; }
         .modal-content { z-index: 1000; transform: translateY(-20px); opacity: 0; transition: opacity 0.3s ease-out, transform 0.3s ease-out; }
         .modal-content.show { opacity: 1; transform: translateY(0); }
-        details { margin-bottom: 1.25rem; border: 1px solid #e5e7eb; border-radius: 0.75rem; background-color: #ffffff; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); overflow: hidden; }
-        summary { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; font-weight: 600; color: #1f2937; cursor: pointer; outline: none; transition: background-color 0.2s ease-in-out; background-color: #f9fafb; border-bottom: 1px solid transparent; }
-        details[open] summary { background-color: #f3f4f6; border-bottom-color: #e5e7eb; }
-        summary::-webkit-details-marker { display: none; }
-        summary::after { content: '▼'; font-size: 0.8em; transition: transform 0.2s ease-in-out; }
-        details[open] summary::after { content: '▲'; transform: rotate(0deg); }
-        .details-content { padding: 1.5rem; background-color: #ffffff; }
+        /* Eliminadas las reglas CSS específicas para details/summary ya que no se usarán */
         .message-success { background-color: #d1fae5; border-color: #a7f3d0; color: #065f46; }
         .message-error { background-color: #fee2e2; border-color: #fca5a5; color: #991b1b; }
         .message-info { background-color: #e0f2fe; border-color: #93c5fd; color: #1e40af; }
@@ -44,35 +38,31 @@
             <!-- Registration Form Container -->
             <div id="registration-section" class="form-container">
                 <form id="newUserForm">
-                    <!-- Sección DATOS BÁSICOS -->
-                    <details open id="datos-basicos-details" class="mb-5 rounded-xl shadow-sm border border-gray-200 bg-white">
-                    <!--    <summary class="py-4 px-6 font-semibold text-gray-900 bg-gray-50 rounded-t-xl">
-                            Datos Básicos 
-                        </summary>        -->
-                        <div class="details-content space-y-5">
-                            <div>
-                                <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
-                                <input type="text" id="nombre" name="nombre" required
-                                       class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
-                            </div>
-                            <div>
-                                <label for="correo" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
-                                <input type="email" id="correo" name="correo" required
-                                       class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
-                            </div>
-                            <div>
-                                <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                                <input type="tel" id="telefono" name="telefono" required
-                                       class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
-                            </div>
-                            <div>
-                                <label for="cliente_idx" class="block text-sm font-medium text-gray-700 mb-1">Cliente IDX</label>
-                                <input type="text" id="cliente_idx" name="cliente_idx"
-                                       class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800"
-                                       placeholder="Ej. ABC12345">
-                            </div>
+                    <!-- Sección DATOS BÁSICOS (anteriormente un <details>, ahora directamente visible) -->
+                    <div id="datos-basicos-content" class="space-y-5 mb-5 rounded-xl shadow-sm border border-gray-200 bg-white p-6">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Datos Básicos</h2>
+                        <div>
+                            <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
+                            <input type="text" id="nombre" name="nombre" required
+                                   class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
                         </div>
-                    </details>
+                        <div>
+                            <label for="correo" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                            <input type="email" id="correo" name="correo" required
+                                   class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
+                        </div>
+                        <div>
+                            <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                            <input type="tel" id="telefono" name="telefono" required
+                                   class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
+                        </div>
+                        <div>
+                            <label for="cliente_idx" class="block text-sm font-medium text-gray-700 mb-1">Cliente IDX</label>
+                            <input type="text" id="cliente_idx" name="cliente_idx"
+                                   class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800"
+                                   placeholder="Ej. ABC12345">
+                        </div>
+                    </div>
 
                     <button type="submit" class="btn-animation w-full mt-8 flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Registrarme
@@ -207,18 +197,17 @@
                 <p class="text-sm"><strong>Cliente IDX:</strong> ${formData.cliente_idx || 'N/A'}</p>
                 <p class="text-sm"><strong>Clave:</strong> ${formData.clave}</p>
                 <p class="text-sm"><strong>ID Cliente:</strong> ${clienteId}</p>
-                <p class="text-sm"><strong>Fecha Registro:</strong> ${formData.cliente_treg}</p>
-
+                <p class="text-sm"><strong>Fecha Registro (Clientes):</strong> ${formData.cliente_treg}</p>
+                <p class="text-sm"><strong>Fecha Registro (Historia):</strong> ${formData.cliente_data_reg}</p>
             `;
             registrationModal.classList.remove('hidden');
             setTimeout(() => {
                 registrationModal.querySelector('.modal-content').classList.add('show');
             }, 10);
         }
-        
-        // xxx <p class="text-sm"><strong>Fecha Registro (Historia):</strong> ${formData.cliente_data_reg}</p>
+
+        // Función para manejar el clic en el botón "Aceptar" del modal
         function handleAcceptRegistration() {
-        // Función para manejar el clic en el botón "Aceptar" del modal  // Función para manejar el clic en el botón "Aceptar" del modal 
             registrationModal.querySelector('.modal-content').classList.remove('show');
             setTimeout(() => {
                 registrationModal.classList.add('hidden');
