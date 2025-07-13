@@ -208,16 +208,17 @@
                 <p class="text-sm"><strong>Clave:</strong> ${formData.clave}</p>
                 <p class="text-sm"><strong>ID Cliente:</strong> ${clienteId}</p>
                 <p class="text-sm"><strong>Fecha Registro (Clientes):</strong> ${formData.cliente_treg}</p>
-                <p class="text-sm"><strong>Fecha Registro (Historia):</strong> ${formData.cliente_data_reg}</p>
+
             `;
             registrationModal.classList.remove('hidden');
             setTimeout(() => {
                 registrationModal.querySelector('.modal-content').classList.add('show');
             }, 10);
         }
-
-        // Función para manejar el clic en el botón "Aceptar" del modal
+        
+        // xxx <p class="text-sm"><strong>Fecha Registro (Historia):</strong> ${formData.cliente_data_reg}</p>
         function handleAcceptRegistration() {
+        // Función para manejar el clic en el botón "Aceptar" del modal  // Función para manejar el clic en el botón "Aceptar" del modal 
             registrationModal.querySelector('.modal-content').classList.remove('show');
             setTimeout(() => {
                 registrationModal.classList.add('hidden');
