@@ -1,0 +1,128 @@
+// App Base Registro Datos RegistroData.gs
+
+function doPost(e) {
+  // Configura tu ID de hoja de cálculo
+  const SPREADSHEET_ID = '1UJoON7v-HdnkVet0LXGYR5GnvNiSojYSoYCBUQDY8a4'; // ¡Reemplaza con el ID de tu Google Sheet!
+
+  // Nombres de las hojas
+  const SHEET_DATOS_CLIENTES = 'Clientes';
+  const SHEET_DATOS_ORDENES_CAB = 'OrdenesCab';
+  const SHEET_DATOS_ORDENES_DET = 'OrdenesDet';
+
+  try {
+    const requestBody = JSON.parse(e.postData.contents);
+
+    // Datos principales del registro
+    const cliente_id = requestBody.cliente_id;
+    const nombre = requestBody.nombre;
+    const correo = requestBody.correo;
+    const telefono = requestBody.telefono;
+    const clave = requestBody.clave; 
+    const cliente_idx = requestBody.cliente_idx || ''; 
+
+    // Datos del carrito de productos
+    const productos_seleccionados_carrito_json = requestBody.productos_seleccionados_carrito || '[]';
+    const productos_seleccionados_carrito = JSON.parse(productos_seleccionados_carrito_json);
+
+    // El Orden_ID ahora se espera que venga del frontend
+    const orden_id = requestBody.orden_id || ''; 
+
+    // Validación básica de datos principales
+    if (!cliente_id || !nombre || !correo || !telefono || !clave) {
+      return createJsonResponse('error', 'Faltan datos obligatorios para el registro principal.');
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+    // --- Definición de encabezados esperados para cada hoja (solo para referencia, no se usa checkAndSetHeaders) ---
+    const clientesHeaders = ['Cliente_ID', 'Cliente_Nombre', 'Cliente_Correo', 'Cliente_Telefono', 'Cliente_Clave', 'Cliente_IDX'];
+    const ordenesCabHeaders = ['Orden_ID', 'Cliente_ID', 'Cliente_Nombre', 'Orden_Fecha', 'Orden_Total'];
+    const ordenesDetHeaders = ['Orden_ID', 'Orden_Pos_ID', 'Cliente_Nombre', 'Orden_Producto_Tipo', 'Orden_Producto_Presentacion', 'Orden_Producto_Costo', 'Orden_Producto_Moneda', 'Orden_Producto_Cantidad', 'Orden_Subtotal_Pos'];
+
+    // --- 1. Guardar datos en la hoja 'Clientes' ---
+    const DataSheetClientes = ss.getSheetByName(SHEET_DATOS_CLIENTES);
+    if (!DataSheetClientes) {
+      return createJsonResponse('error', `La hoja '${SHEET_DATOS_CLIENTES}' no fue encontrada.`);
+    }
+    DataSheetClientes.appendRow([cliente_id, nombre, correo, telefono, clave, cliente_idx]);
+
+    // --- Lógica para OrdenesCab y OrdenesDet (solo si hay productos en el carrito) ---
+    if (productos_seleccionados_carrito.length > 0) {
+      // Usamos el orden_id que viene del frontend
+      const current_orden_id = orden_id; 
+      const orden_fecha = new Date(); 
+
+      let orden_total = 0;
+      productos_seleccionados_carrito.forEach(item => {
+        orden_total += (item.Costo * item.Cantidad);
+      });
+
+      // --- 2. Guardar datos en la hoja 'OrdenesCab' ---
+      const DataSheetCab = ss.getSheetByName(SHEET_DATOS_ORDENES_CAB);
+      if (!DataSheetCab) {
+        return createJsonResponse('error', `La hoja '${SHEET_DATOS_ORDENES_CAB}' no fue encontrada.`);
+      }
+      DataSheetCab.appendRow([current_orden_id, cliente_id, nombre, orden_fecha, orden_total]);
+
+      // --- 3. Guardar datos en la hoja 'OrdenesDet' ---
+      const DataSheetDet = ss.getSheetByName(SHEET_DATOS_ORDENES_DET);
+      if (!DataSheetDet) {
+        return createJsonResponse('error', `La hoja '${SHEET_DATOS_ORDENES_DET}' no fue encontrada.`);
+      }
+
+      let orden_pos_id_counter = 1;
+      productos_seleccionados_carrito.forEach(item => {
+        const orden_subtotal_pos = item.Costo * item.Cantidad;
+        DataSheetDet.appendRow([
+          current_orden_id,
+          orden_pos_id_counter++,
+          nombre, // Incluido Cliente_Nombre
+          item.Tipo,
+          item.Presentacion,
+          item.Costo,
+          "USD", 
+          item.Cantidad,
+          orden_subtotal_pos
+        ]);
+      });
+    }
+
+    return createJsonResponse('success', 'Usuario registrado y datos de pedido guardados exitosamente.');
+
+  } catch (error) {
+    Logger.log('Error en doPost: ' + error.toString());
+    return createJsonResponse('error', 'Error interno del servidor: ' + error.message);
+  }
+}
+
+/**
+ * Genera un UUID corto de 5 caracteres alfanuméricos.
+ * Esta función se utilizaba para generar Orden_ID en el backend,
+ * pero ahora se genera en el frontend y se envía al script.
+ * @returns {string} Un UUID corto.
+ */
+/*
+function generateShortUUID() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ023456789';
+  let result = '';
+  for (let i = 0; i < 5; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+*/
+
+// Función auxiliar para crear respuestas JSON
+function createJsonResponse(status, message, data = null) {
+  const response = { status: status, message: message };
+  if (data) {
+    response.data = data;
+  }
+  return ContentService.createTextOutput(JSON.stringify(response))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// Opcional: doGet puede ser eliminado o simplemente devolver un error si es accedido
+function doGet(e) {
+  return createJsonResponse('error', 'Esta aplicación solo soporta solicitudes POST para registro.');
+}
