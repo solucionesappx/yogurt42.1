@@ -107,7 +107,11 @@
 
             if (user) {
                 // Guardar el usuario logueado en sessionStorage
-                sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+                const loggedInUserWithTimestamp = {
+                    ...user,
+                    Cliente_Data_Reg: new Date().toISOString() // Fecha y hora del inicio de sesión
+                };
+                sessionStorage.setItem('loggedInUser', JSON.stringify(loggedInUserWithTimestamp));
                 showMessage('¡Inicio de Sesión Exitoso! Redirigiendo...', 'success');
                 // Redirigir a la página del catálogo
                 window.location.href = 'catalog.html';
