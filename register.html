@@ -158,7 +158,8 @@
             formDataObj.clave = generateRandomPassword();
             formDataObj.cliente_id = generateUUID();
             formDataObj.productos_seleccionados_carrito = JSON.stringify([]); // Siempre vacío en esta página
-            formDataObj.cliente_data_reg = formatDateTime(new Date()); // Añadir fecha y hora de registro
+            formDataObj.cliente_data_reg = formatDateTime(new Date()); // Añadir fecha y hora de registro para Historia
+            formDataObj.cliente_treg = formatDateTime(new Date()); // Añadir fecha y hora de registro para Clientes
 
             console.log("Contenido completo del objeto JSON enviado:", formDataObj);
 
@@ -206,7 +207,8 @@
                 <p class="text-sm"><strong>Cliente IDX:</strong> ${formData.cliente_idx || 'N/A'}</p>
                 <p class="text-sm"><strong>Clave:</strong> ${formData.clave}</p>
                 <p class="text-sm"><strong>ID Cliente:</strong> ${clienteId}</p>
-                <p class="text-sm"><strong>Fecha Registro:</strong> ${formData.cliente_data_reg}</p>
+                <p class="text-sm"><strong>Fecha Registro (Clientes):</strong> ${formData.cliente_treg}</p>
+                <p class="text-sm"><strong>Fecha Registro (Historia):</strong> ${formData.cliente_data_reg}</p>
             `;
             registrationModal.classList.remove('hidden');
             setTimeout(() => {
