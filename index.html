@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
+    <title>Registrar Nuevo Usuario</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +13,16 @@
         .btn-animation { transition: all 0.2s ease-in-out; }
         .btn-animation:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
         .input-focus-animation:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); }
+        .modal-overlay { background-color: rgba(0, 0, 0, 0.5); z-index: 999; }
+        .modal-content { z-index: 1000; transform: translateY(-20px); opacity: 0; transition: opacity 0.3s ease-out, transform 0.3s ease-out; }
+        .modal-content.show { opacity: 1; transform: translateY(0); }
+        details { margin-bottom: 1.25rem; border: 1px solid #e5e7eb; border-radius: 0.75rem; background-color: #ffffff; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); overflow: hidden; }
+        summary { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; font-weight: 600; color: #1f2937; cursor: pointer; outline: none; transition: background-color 0.2s ease-in-out; background-color: #f9fafb; border-bottom: 1px solid transparent; }
+        details[open] summary { background-color: #f3f4f6; border-bottom-color: #e5e7eb; }
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: '▼'; font-size: 0.8em; transition: transform 0.2s ease-in-out; }
+        details[open] summary::after { content: '▲'; transform: rotate(0deg); }
+        .details-content { padding: 1.5rem; background-color: #ffffff; }
         .message-success { background-color: #d1fae5; border-color: #a7f3d0; color: #065f46; }
         .message-error { background-color: #fee2e2; border-color: #fca5a5; color: #991b1b; }
         .message-info { background-color: #e0f2fe; border-color: #93c5fd; color: #1e40af; }
@@ -22,69 +32,108 @@
 
     <div class="w-full max-w-lg mx-auto">
         <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-10 border border-gray-100">
-            <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Iniciar Sesión</h1>
-            <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto">Ingresa tus credenciales para acceder.</p>
+            <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Registrar Nuevo Usuario</h1>
+            <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto">Completa el formulario para crear una nueva cuenta.</p>
 
             <!-- Navigation Buttons -->
             <div class="flex justify-center space-x-4 mb-8">
-                <button id="show-login-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-blue-600 text-white shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Iniciar Sesión</button>
-                <button id="show-register-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-gray-200 text-gray-800 shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">Registrar Usuario</button>
+                <button id="show-login-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-gray-200 text-gray-800 shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">Iniciar Sesión</button>
+                <button id="show-register-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-indigo-600 text-white shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Registrar Usuario</button>
             </div>
 
-            <!-- Login Form Container -->
-            <div id="login-section" class="form-container">
-                <div class="bg-white p-8 rounded-xl w-full">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Iniciar Sesión</h2>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="login-username">
-                            Nombre del Cliente
-                        </label>
-                        <input
-                            type="text"
-                            id="login-username"
-                            class="input-focus-animation shadow appearance-none border rounded-lg w-full py-2.5 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            placeholder="Ej. Juan Perez"
-                        >
-                    </div>
-                    <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="login-password">
-                            Clave
-                        </label>
-                        <input
-                            type="password"
-                            id="login-password"
-                            class="input-focus-animation shadow appearance-none border rounded-lg w-full py-2.5 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                            placeholder="Tu clave secreta"
-                        >
-                    </div>
-                    <button
-                        id="login-button"
-                        class="btn-animation w-full flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    >
-                        Iniciar Sesión
+            <!-- Registration Form Container -->
+            <div id="registration-section" class="form-container">
+                <form id="newUserForm">
+                    <!-- Sección DATOS BÁSICOS -->
+                    <details open id="datos-basicos-details" class="mb-5 rounded-xl shadow-sm border border-gray-200 bg-white">
+                        <summary class="py-4 px-6 font-semibold text-gray-900 bg-gray-50 rounded-t-xl">
+                            Datos Básicos
+                        </summary>
+                        <div class="details-content space-y-5">
+                            <div>
+                                <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
+                                <input type="text" id="nombre" name="nombre" required
+                                       class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
+                            </div>
+                            <div>
+                                <label for="correo" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                                <input type="email" id="correo" name="correo" required
+                                       class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
+                            </div>
+                            <div>
+                                <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                                <input type="tel" id="telefono" name="telefono" required
+                                       class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
+                            </div>
+                            <div>
+                                <label for="cliente_idx" class="block text-sm font-medium text-gray-700 mb-1">Cliente IDX</label>
+                                <input type="text" id="cliente_idx" name="cliente_idx"
+                                       class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800"
+                                       placeholder="Ej. ABC12345">
+                            </div>
+                        </div>
+                    </details>
+
+                    <button type="submit" class="btn-animation w-full mt-8 flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Registrarme
                     </button>
-                </div>
+                </form>
             </div>
 
-            <!-- Área para mostrar mensajes -->
-            <div id="message-container" class="mt-8 text-center p-4 rounded-xl transition-all duration-300 ease-in-out hidden"></div>
+            <!-- Área para mostrar mensajes y resultados del formulario de registro -->
+            <div id="result-container" class="mt-8 text-center p-4 rounded-xl transition-all duration-300 ease-in-out"></div>
+        </div>
+    </div>
+
+    <!-- Estructura del Modal (Pop-up) -->
+    <div id="registration-modal" class="fixed inset-0 flex items-center justify-center hidden modal-overlay">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full modal-content">
+            <h3 class="text-2xl font-bold text-green-700 text-center mb-4" id="modal-title"></h3>
+            <p class="text-gray-700 text-center mb-4" id="modal-message"></p>
+            <div id="modal-content-details" class="text-left bg-green-50 text-green-800 p-4 rounded-lg space-y-2 mb-6">
+                <!-- Los detalles del registro se insertarán aquí por JavaScript -->
+            </div>
+            <button type="button" onclick="handleAcceptRegistration()" class="btn-animation w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Aceptar
+            </button>
         </div>
     </div>
 
     <script>
-        // --- DATOS MOCK DE CLIENTES (para el login) ---
-        const mockClientes = [
-            { Cliente_ID: 1001, Cliente_Clave: 'clave123', Cliente_Nombre: 'Juan Perez', Cliente_Status: 'Activo', Cliente_Perfil: 'Admin' },
-            { Cliente_ID: 1002, Cliente_Clave: 'clave456', Cliente_Nombre: 'Maria Lopez', Cliente_Status: 'Activo', Cliente_Perfil: 'Client' },
-            { Cliente_ID: 1003, Cliente_Clave: 'clave789', Cliente_Nombre: 'Pedro Gomez', Cliente_Status: 'Activo', Cliente_Perfil: 'Client' },
-        ];
+        // --- CONFIGURACIÓN -ref DRIVE archivo: X42 Yogurt YLOC - ID: 1UJoON7v-HdnkVet0LXGYR5GnvNiSojYSoYCBUQDY8a4
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyr4qsvZq8_yVs5MfnuVmfK1mpIM4b-kuw_Y7Cc9QHdtPJ9bE0vqqbucAsWRpZqjXWw/exec'; // ¡Reemplaza con tu URL de Google Apps Script!
 
-        // Elementos del DOM
-        const loginUsernameInput = document.getElementById('login-username');
-        const loginPasswordInput = document.getElementById('login-password');
-        const loginButton = document.getElementById('login-button');
-        const showRegisterFormBtn = document.getElementById('show-register-form-btn');
-        const messageContainer = document.getElementById('message-container');
+        // Elementos del DOM del formulario de registro
+        const newUserForm = document.getElementById('newUserForm');
+        const resultContainer = document.getElementById('result-container');
+        const registrationModal = document.getElementById('registration-modal');
+        const modalContentDetails = document.getElementById('modal-content-details');
+
+        // Navegación
+        document.getElementById('show-login-form-btn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        // Función para generar un UUID (ID único de cliente)
+        function generateUUID() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 5; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Función para generar una contraseña aleatoria
+        function generateRandomPassword(length = 6) {
+            const charset = "abcefghijkmnoqrstuvwxyzABCEFGHIJKLMNQRSTUVWXYZ23456789";
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * charset.length);
+                password += charset[randomIndex];
+            }
+            return password;
+        }
 
         // Función para formatear la fecha y hora a dd/mm/aaaa hh:mm:ss
         function formatDateTime(date) {
@@ -97,44 +146,153 @@
             return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
         }
 
-        // Función para mostrar mensajes
-        function showMessage(message, type) {
-            messageContainer.textContent = message;
-            messageContainer.className = `mt-8 text-center p-4 rounded-xl transition-all duration-300 ease-in-out ${type === 'success' ? 'message-success' : (type === 'error' ? 'message-error' : 'message-info')}`;
-            messageContainer.classList.remove('hidden');
+        // Manejador del formulario de registro
+        newUserForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const submitButton = newUserForm.querySelector('button[type="submit"]');
+            setLoading(submitButton, 'Registrando...');
+
+            const formData = new FormData(newUserForm);
+            const formDataObj = Object.fromEntries(formData.entries());
+
+            formDataObj.clave = generateRandomPassword();
+            formDataObj.cliente_id = generateUUID();
+            formDataObj.productos_seleccionados_carrito = JSON.stringify([]); // Siempre vacío en esta página
+            formDataObj.cliente_data_reg = formatDateTime(new Date()); // Añadir fecha y hora de registro para Historia
+            formDataObj.cliente_treg = formatDateTime(new Date()); // Añadir fecha y hora de registro para Clientes
+
+            console.log("Contenido completo del objeto JSON enviado:", formDataObj);
+
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify(formDataObj) })
+                .then(response => response.json())
+                .then(responseData => {
+                    console.log('Success:', responseData);
+                    if (responseData.status === 'success') {
+                        // Guardar el nuevo usuario en sessionStorage
+                        const newUser = {
+                            Cliente_ID: formDataObj.cliente_id,
+                            Cliente_Nombre: formDataObj.nombre,
+                            Cliente_Clave: formDataObj.clave, // La clave generada
+                            Cliente_Perfil: 'Client', // Por defecto, es un cliente
+                            Cliente_Data_Reg: formDataObj.cliente_data_reg // Guardar la fecha/hora formateada
+                        };
+                        sessionStorage.setItem('loggedInUser', JSON.stringify(newUser));
+                        showRegistrationSuccessModal(formDataObj, formDataObj.cliente_id);
+                    } else {
+                        showResult(`
+                            <h3 class="text-xl font-bold text-red-700 mb-2">Error en el Registro</h3>
+                            <p class="text-gray-700 mt-2">${responseData.message || 'No se pudo completar el registro. Inténtalo de nuevo.'}</p>
+                        `, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    showResult(`
+                        <h3 class="text-xl font-bold text-red-700 mb-2">Error en la Conexión</h3>
+                        <p class="text-gray-700 mt-2">Ocurrió un problema al conectar con el servidor. Inténtalo de nuevo más tarde o contacta soporte.</p>
+                    `, 'error');
+                })
+                .finally(() => {
+                    resetButton(submitButton, 'Registrarme');
+                });
+        });
+
+        // Función para mostrar el modal de registro con los datos
+        function showRegistrationSuccessModal(formData, clienteId) {
+            showMessageModal('¡Registro Exitoso!', 'Tus datos han sido guardados correctamente:', 'success');
+            modalContentDetails.innerHTML = `
+                <p class="text-sm"><strong>Nombre:</strong> ${formData.nombre}</p>
+                <p class="text-sm"><strong>Correo:</strong> ${formData.correo}</p>
+                <p class="text-sm"><strong>Teléfono:</strong> ${formData.telefono}</p>
+                <p class="text-sm"><strong>Cliente IDX:</strong> ${formData.cliente_idx || 'N/A'}</p>
+                <p class="text-sm"><strong>Clave:</strong> ${formData.clave}</p>
+                <p class="text-sm"><strong>ID Cliente:</strong> ${clienteId}</p>
+                <p class="text-sm"><strong>Fecha Registro (Clientes):</strong> ${formData.cliente_treg}</p>
+                <p class="text-sm"><strong>Fecha Registro (Historia):</strong> ${formData.cliente_data_reg}</p>
+            `;
+            registrationModal.classList.remove('hidden');
             setTimeout(() => {
-                messageContainer.classList.add('hidden');
-            }, 1300); // Ocultar después de 1.3 segundos
+                registrationModal.querySelector('.modal-content').classList.add('show');
+            }, 10);
         }
 
-        // Lógica del Login
-        loginButton.addEventListener('click', () => {
-            const username = loginUsernameInput.value;
-            const password = loginPasswordInput.value;
+        // Función para manejar el clic en el botón "Aceptar" del modal
+        function handleAcceptRegistration() {
+            registrationModal.querySelector('.modal-content').classList.remove('show');
+            setTimeout(() => {
+                registrationModal.classList.add('hidden');
+                newUserForm.reset();
+                resultContainer.innerHTML = '';
+                resultContainer.className = 'mt-8 text-center p-4 rounded-xl transition-all duration-300 ease-in-out';
+                window.location.href = 'catalog.html'; // Redirigir al catálogo después de aceptar
+            }, 300);
+        }
 
-            const user = mockClientes.find(
-                (c) => c.Cliente_Nombre === username && c.Cliente_Clave === password && c.Cliente_Status === 'Activo'
-            );
+        // Funciones de utilidad para la UI (mostrar carga, restablecer botón, mostrar resultados, modal)
+        function setLoading(button, text) {
+            button.disabled = true;
+            button.classList.add('opacity-75', 'cursor-not-allowed');
+            button.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>${text}`;
+        }
 
-            if (user) {
-                // Guardar el usuario logueado en sessionStorage
-                const loggedInUserWithTimestamp = {
-                    ...user,
-                    Cliente_Data_Reg: formatDateTime(new Date()) // Formatear fecha y hora del inicio de sesión
-                };
-                sessionStorage.setItem('loggedInUser', JSON.stringify(loggedInUserWithTimestamp));
-                showMessage('¡Inicio de Sesión Exitoso! Redirigiendo...', 'success');
-                // Redirigir a la página del catálogo
-                window.location.href = 'catalog.html';
+        function resetButton(button, text) {
+            button.disabled = false;
+            button.classList.remove('opacity-75', 'cursor-not-allowed');
+            button.innerHTML = text;
+        }
+
+        function showResult(htmlContent, type) {
+            resultContainer.innerHTML = htmlContent;
+            if (type === 'success') {
+                resultContainer.classList.add('bg-green-100', 'border-green-300', 'text-green-800', 'shadow-md');
+                resultContainer.classList.remove('bg-red-100', 'border-red-300', 'text-red-800');
             } else {
-                showMessage('Nombre de usuario o clave incorrectos, o usuario inactivo.', 'error');
+                resultContainer.classList.add('bg-red-100', 'border-red-300', 'text-red-800', 'shadow-md');
+                resultContainer.classList.remove('bg-green-100', 'border-green-300', 'text-green-800');
             }
-        });
+        }
 
-        // Navegación al formulario de registro
-        showRegisterFormBtn.addEventListener('click', () => {
-            window.location.href = 'register.html';
-        });
+        function showMessageModal(title, message, type) {
+            const modal = document.getElementById('registration-modal');
+            const modalTitleElement = modal.querySelector('#modal-title');
+            const modalMessageElement = modal.querySelector('#modal-message');
+            const modalContent = modal.querySelector('.modal-content');
+
+            if (modalTitleElement) {
+                modalTitleElement.textContent = title;
+                modalTitleElement.classList.remove('text-green-700', 'text-red-700', 'text-blue-700');
+                if (type === 'success') { modalTitleElement.classList.add('text-green-700'); }
+                else if (type === 'error') { modalTitleElement.classList.add('text-red-700'); }
+                else if (type === 'info') { modalTitleElement.classList.add('text-blue-700'); }
+            }
+            if (modalMessageElement) {
+                modalMessageElement.textContent = message;
+                modalMessageElement.classList.remove('text-gray-700');
+                if (type === 'success') { modalMessageElement.classList.add('text-green-800'); }
+                else if (type === 'error') { modalMessageElement.classList.add('text-red-800'); }
+                else if (type === 'info') { modalMessageElement.classList.add('text-blue-800'); }
+                else { modalMessageElement.classList.add('text-gray-700'); }
+            }
+            modalContent.classList.remove('bg-green-100', 'bg-red-100', 'bg-blue-100', 'bg-white');
+            if (type === 'success') { modalContent.classList.add('bg-green-100'); }
+            else if (type === 'error') { modalContent.classList.add('bg-red-100'); }
+            else if (type === 'info') { modalContent.classList.add('bg-blue-100'); }
+            else { modalContent.classList.add('bg-white'); }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.add('show');
+            }, 10);
+        }
+
+        window.closeMessageModal = function() {
+            const modal = document.getElementById('registration-modal');
+            const modalContent = modal.querySelector('.modal-content');
+            modalContent.classList.remove('show');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        };
     </script>
 </body>
 </html>
