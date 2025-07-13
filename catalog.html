@@ -145,7 +145,7 @@
         </div>
 
         <script>
-            // --- CONFIGURACIÓN ---
+            // --- CONFIGURACIÓN ---ref DRIVE archivo: X42 Yogurt YLOC - ID: 1UJoON7v-HdnkVet0LXGYR5GnvNiSojYSoYCBUQDY8a4
             const scriptURL = 'https://script.google.com/macros/s/AKfycbyr4qsvZq8_yVs5MfnuVmfK1mpIM4b-kuw_Y7Cc9QHdtPJ9bE0vqqbucAsWRpZqjXWw/exec'; // ¡Reemplaza con tu URL de Google Apps Script!
 
             // Elementos del DOM
@@ -231,6 +231,17 @@
                     result += chars.charAt(Math.floor(Math.random() * chars.length));
                 }
                 return result;
+            }
+
+            // Función para formatear la fecha y hora a dd/mm/aaaa hh:mm:ss
+            function formatDateTime(date) {
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses son 0-indexados
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const seconds = String(date.getSeconds()).padStart(2, '0');
+                return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
             }
 
             // Función para poblar el dropdown de Tipo de Producto
@@ -425,7 +436,8 @@
                     clave: loggedInUser.Cliente_Clave,
                     cliente_idx: loggedInUser.Cliente_IDX || '',
                     orden_id: generateShortUUID(), // Generar Orden_ID aquí
-                    productos_seleccionados_carrito: JSON.stringify(cartItems)
+                    productos_seleccionados_carrito: JSON.stringify(cartItems),
+                    cliente_data_reg: loggedInUser.Cliente_Data_Reg || formatDateTime(new Date()) // Usar la fecha de login/registro o la actual
                 };
 
                 console.log("Contenido completo del objeto JSON enviado:", formDataObj);
