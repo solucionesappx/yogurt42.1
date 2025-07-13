@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seleccionar Productos</title>
+    <title>Registrar Nuevo Usuario</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,13 +16,7 @@
         .modal-overlay { background-color: rgba(0, 0, 0, 0.5); z-index: 999; }
         .modal-content { z-index: 1000; transform: translateY(-20px); opacity: 0; transition: opacity 0.3s ease-out, transform 0.3s ease-out; }
         .modal-content.show { opacity: 1; transform: translateY(0); }
-        details { margin-bottom: 1.25rem; border: 1px solid #e5e7eb; border-radius: 0.75rem; background-color: #ffffff; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); overflow: hidden; }
-        summary { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; font-weight: 600; color: #1f2937; cursor: pointer; outline: none; transition: background-color 0.2s ease-in-out; background-color: #f9fafb; border-bottom: 1px solid transparent; }
-        details[open] summary { background-color: #f3f4f6; border-bottom-color: #e5e7eb; }
-        summary::-webkit-details-marker { display: none; }
-        summary::after { content: '▼'; font-size: 0.8em; transition: transform 0.2s ease-in-out; }
-        details[open] summary::after { content: '▲'; transform: rotate(0deg); }
-        .details-content { padding: 1.5rem; background-color: #ffffff; }
+        /* Eliminadas las reglas CSS específicas para details/summary ya que no se usarán */
         .message-success { background-color: #d1fae5; border-color: #a7f3d0; color: #065f46; }
         .message-error { background-color: #fee2e2; border-color: #fca5a5; color: #991b1b; }
         .message-info { background-color: #e0f2fe; border-color: #93c5fd; color: #1e40af; }
@@ -32,590 +26,263 @@
 
     <div class="w-full max-w-lg mx-auto">
         <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-10 border border-gray-100">
-            <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Seleccionar Productos</h1>
-            <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto" id="welcome-message">Bienvenido, Cliente.</p>
+            <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Registrar Nuevo Usuario</h1>
+            <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto">Completa el formulario para crear una nueva cuenta.</p>
 
-            <!-- Botón para regresar a la página anterior -->
-            <div class="flex justify-start mb-8">
-                <button id="back-button" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-gray-200 text-gray-800 shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">Regresar</button>
-                <button id="logout-button" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-red-500 text-white shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400 ml-auto">Cerrar Sesión</button>
+            <!-- Navigation Buttons -->
+            <div class="flex justify-center space-x-4 mb-8">
+                <button id="show-login-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-gray-200 text-gray-800 shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">Iniciar Sesión</button>
+                <button id="show-register-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-indigo-600 text-white shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Registrar Usuario</button>
             </div>
 
-            <form id="productSelectionForm">
-                <!-- Sección Selector de Catálogo de Productos y Carrito -->
-                <details open id="productos-catalogo-details" class="mb-5 rounded-xl shadow-sm border border-gray-200 bg-white">
-                    <summary class="py-4 px-6 font-semibold text-gray-900 bg-gray-50 rounded-t-xl">
-                        Seleccionar Productos del Catálogo
-                    </summary>
-                    <div class="details-content space-y-5">
+            <!-- Registration Form Container -->
+            <div id="registration-section" class="form-container">
+                <form id="newUserForm">
+                    <!-- Sección DATOS BÁSICOS (anteriormente un <details>, ahora directamente visible) -->
+                    <div id="datos-basicos-content" class="space-y-5 mb-5 rounded-xl shadow-sm border border-gray-200 bg-white p-6">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Datos Básicos</h2>
                         <div>
-                            <label for="product-type-select" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Producto</label>
-                            <select id="product-type-select" class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
-                                <option value="">Selecciona un tipo de producto</option>
-                            </select>
-                        </div>
-                        <div class="flex items-center">
-                            <input type="checkbox" id="has-sugar-checkbox" class="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                            <label for="has-sugar-checkbox" class="ml-2 text-sm font-medium text-gray-700">Con Azúcar</label>
-                        </div>
-                        <div>
-                            <label for="flavor-select" class="block text-sm font-medium text-gray-700 mb-1">Sabor</label>
-                            <select id="flavor-select" class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800" disabled>
-                                <option value="">Selecciona un sabor</option>
-                            </select>
-                            <p id="flavor-info" class="text-xs text-gray-500 mt-1 hidden">Sabor: Natural (Automático para Yogurt Griego Natural)</p>
-                        </div>
-                        <div>
-                            <label for="quantity-input" class="block text-sm font-medium text-gray-700 mb-1">Cantidad</label>
-                            <input type="number" id="quantity-input" value="1" min="1"
+                            <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
+                            <input type="text" id="nombre" name="nombre" required
                                    class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
                         </div>
-                        <button type="button" id="add-to-cart-button" class="btn-animation w-full flex items-center justify-center py-2.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                Añadir al Carrito
-                            </button>
-
-                            <div id="cart-message-container" class="mt-4 text-center p-3 rounded-lg hidden border"></div>
-
-                            <h4 class="text-lg font-semibold text-gray-800 mt-6 mb-3">Productos en el Carrito:</h4>
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full bg-white border border-gray-200 rounded-lg">
-                                    <thead class="bg-gray-100 border-b border-gray-200">
-                                        <tr>
-                                            <th class="py-2 px-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider rounded-tl-lg">#</th>
-                                            <th class="py-2 px-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Producto</th>
-                                            <th class="py-2 px-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">QTY</th>
-                                            <th class="py-2 px-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">USD</th>
-                                            <th class="py-2 px-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">💀</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="cart-table-body">
-                                        <!-- Los productos del carrito se insertarán aquí con JavaScript -->
-                                    </tbody>
-                                    <tfoot>
-                                        <tr class="bg-gray-50 border-t border-gray-300">
-                                            <td colspan="2" class="py-2 px-3 text-right text-sm font-bold text-gray-800">Totales:</td>
-                                            <td class="py-2 px-3 text-right text-sm font-bold text-gray-800" id="cart-total-quantity">0</td>
-                                            <td class="py-2 px-3 text-right text-sm font-bold text-gray-800" id="cart-total-cost">0.00</td>
-                                            <td class="py-2 px-3"></td> <!-- Celda vacía para la columna de eliminar -->
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
+                        <div>
+                            <label for="correo" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                            <input type="email" id="correo" name="correo" required
+                                   class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
                         </div>
-                    </details>
+                        <div>
+                            <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                            <input type="tel" id="telefono" name="telefono" required
+                                   class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
+                        </div>
+                        <div>
+                            <label for="cliente_idx" class="block text-sm font-medium text-gray-700 mb-1">Cliente IDX</label>
+                            <input type="text" id="cliente_idx" name="cliente_idx"
+                                   class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800"
+                                   placeholder="Ej. ABC12345">
+                        </div>
+                    </div>
 
                     <button type="submit" class="btn-animation w-full mt-8 flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Registrar Selección
+                        Registrarme
                     </button>
                 </form>
-
-                <!-- Área para mostrar mensajes y resultados del formulario de registro -->
-                <div id="result-container" class="mt-8 text-center p-4 rounded-xl transition-all duration-300 ease-in-out"></div>
             </div>
-        </div>
 
-        <!-- Estructura del Modal (Pop-up) para registro/pedido exitoso -->
-        <div id="registration-modal" class="fixed inset-0 flex items-center justify-center hidden modal-overlay">
-            <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full modal-content">
-                <h3 class="text-2xl font-bold text-green-700 text-center mb-4" id="modal-title"></h3>
-                <p class="text-gray-700 text-center mb-4" id="modal-message"></p>
-                <div id="modal-content-details" class="text-left bg-green-50 text-green-800 p-4 rounded-lg space-y-2 mb-6">
-                    <!-- Los detalles del registro se insertarán aquí por JavaScript -->
-                </div>
-                <button type="button" onclick="handleAcceptRegistration()" class="btn-animation w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Aceptar
-                </button>
+            <!-- Área para mostrar mensajes y resultados del formulario de registro -->
+            <div id="result-container" class="mt-8 text-center p-4 rounded-xl transition-all duration-300 ease-in-out"></div>
+        </div>
+    </div>
+
+    <!-- Estructura del Modal (Pop-up) -->
+    <div id="registration-modal" class="fixed inset-0 flex items-center justify-center hidden modal-overlay">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full modal-content">
+            <h3 class="text-2xl font-bold text-green-700 text-center mb-4" id="modal-title"></h3>
+            <p class="text-gray-700 text-center mb-4" id="modal-message"></p>
+            <div id="modal-content-details" class="text-left bg-green-50 text-green-800 p-4 rounded-lg space-y-2 mb-6">
+                <!-- Los detalles del registro se insertarán aquí por JavaScript -->
             </div>
+            <button type="button" onclick="handleAcceptRegistration()" class="btn-animation w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Aceptar
+            </button>
         </div>
+    </div>
 
-        <!-- Nuevo Modal de Confirmación para Salir/Regresar -->
-        <div id="confirm-exit-modal" class="fixed inset-0 flex items-center justify-center hidden modal-overlay">
-            <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full modal-content">
-                <h3 class="text-2xl font-bold text-red-700 text-center mb-4">¡Atención!</h3>
-                <p class="text-gray-700 text-center mb-6">Si regresas a la página anterior, tu sesión se cerrará automáticamente.</p>
-                <div class="flex justify-center space-x-4">
-                    <button type="button" id="confirm-exit-accept-btn" class="btn-animation py-2.5 px-6 rounded-xl font-semibold text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                        Aceptar y Salir
-                    </button>
-                    <button type="button" id="confirm-exit-cancel-btn" class="btn-animation py-2.5 px-6 rounded-xl font-semibold bg-gray-300 text-gray-800 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
-                        Cancelar
-                    </button>
-                </div>
-            </div>
-        </div>
+    <script>
+        // --- CONFIGURACIÓN -ref DRIVE archivo: X42 Yogurt YLOC - ID: 1UJoON7v-HdnkVet0LXGYR5GnvNiSojYSoYCBUQDY8a4
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyr4qsvZq8_yVs5MfnuVmfK1mpIM4b-kuw_Y7Cc9QHdtPJ9bE0vqqbucAsWRpZqjXWw/exec'; // ¡Reemplaza con tu URL de Google Apps Script!
 
-        <script>
-            // --- CONFIGURACIÓN ---ref DRIVE archivo: X42 Yogurt YLOC - ID: 1UJoON7v-HdnkVet0LXGYR5GnvNiSojYSoYCBUQDY8a4
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbyr4qsvZq8_yVs5MfnuVmfK1mpIM4b-kuw_Y7Cc9QHdtPJ9bE0vqqbucAsWRpZqjXWw/exec'; // ¡Reemplaza con tu URL de Google Apps Script!
+        // Elementos del DOM del formulario de registro
+        const newUserForm = document.getElementById('newUserForm');
+        const resultContainer = document.getElementById('result-container');
+        const registrationModal = document.getElementById('registration-modal');
+        const modalContentDetails = document.getElementById('modal-content-details');
 
-            // Elementos del DOM
-            const productSelectionForm = document.getElementById('productSelectionForm');
-            const welcomeMessage = document.getElementById('welcome-message');
-            const backButton = document.getElementById('back-button');
-            const logoutButton = document.getElementById('logout-button');
-            const resultContainer = document.getElementById('result-container');
-            const registrationModal = document.getElementById('registration-modal');
-            const modalContentDetails = document.getElementById('modal-content-details');
+        // Navegación
+        document.getElementById('show-login-form-btn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
 
-            // Nuevos elementos del DOM para el modal de confirmación de salida
-            const confirmExitModal = document.getElementById('confirm-exit-modal');
-            const confirmExitAcceptBtn = document.getElementById('confirm-exit-accept-btn');
-            const confirmExitCancelBtn = document.getElementById('confirm-exit-cancel-btn');
-
-
-            // Elementos del DOM del selector de catálogo y carrito
-            const productTypeSelect = document.getElementById('product-type-select');
-            const hasSugarCheckbox = document.getElementById('has-sugar-checkbox');
-            const flavorSelect = document.getElementById('flavor-select');
-            const flavorInfo = document.getElementById('flavor-info');
-            const quantityInput = document.getElementById('quantity-input');
-            const addToCartButton = document.getElementById('add-to-cart-button');
-            const cartMessageContainer = document.getElementById('cart-message-container');
-            const cartTableBody = document.getElementById('cart-table-body');
-            const cartTotalCostElement = document.getElementById('cart-total-cost');
-            const cartTotalQuantityElement = document.getElementById('cart-total-quantity');
-
-            let loggedInUser = null;
-            let cartItems = [];
-
-            // --- DATOS MOCK DEL CATÁLOGO DE PRODUCTOS (se define aquí para esta vista) ---
-            const baseProductTypes = [
-                { name: 'Yogurt Batido', sizes: ['7 Oz', '23 Oz', '20 L'], baseCost: { '7 Oz': 2, '23 Oz': 5, '20 L': 35 }, moneda: 'USD', tienda: 'Tienda A' },
-                { name: 'Yogurt Griego Natural', sizes: ['7 Oz', '23 Oz', '20 Kg'], baseCost: { '7 Oz': 3, '23 Oz': 7, '20 Kg': 40 }, moneda: 'USD', tienda: 'Tienda B' },
-                { name: 'Yogurt Griego con Frutas', sizes: ['7 Oz', '23 Oz'], baseCost: { '7 Oz': 3.5, '23 Oz': 8 }, moneda: 'USD', tienda: 'Tienda A' },
-                { name: 'Yogurt Líquido', sizes: ['900 ml'], baseCost: { '900 ml': 4 }, moneda: 'USD', tienda: 'Tienda B' },
-            ];
-
-            const allFlavors = [
-                'Fresa', 'Mora', 'Piña', 'Parchita', 'Ciruela', 'Guanábana', 'Durazno', 'Dulce', 'Natural', 'Otro'
-            ];
-
-            const generateProductCatalog = () => {
-                let id = 101;
-                const catalog = [];
-                baseProductTypes.forEach(productType => {
-                    productType.sizes.forEach(size => {
-                        let applicableFlavors = allFlavors;
-                        if (productType.name === 'Yogurt Griego Natural') {
-                            applicableFlavors = ['Natural'];
-                        }
-                        const sugarOptions = [true, false];
-                        sugarOptions.forEach(hasSugar => {
-                            applicableFlavors.forEach(flavor => {
-                                const description = `${productType.name} ${size}`;
-                                const presentation = `${hasSugar ? 'C/Azúcar' : 'S/Azúcar'}, Sabor: ${flavor}`;
-                                const cost = productType.baseCost[size];
-                                catalog.push({
-                                    Plan_Cat_ID: id++,
-                                    Plan_Cat_Descripción: description,
-                                    Plan_Cat_Presentación: presentation,
-                                    Plan_Cat_Costo: cost,
-                                    Plan_Cat_Moneda: productType.moneda,
-                                    Plan_Cat_Tienda: "Y42X"
-                                });
-                            });
-                        });
-                    });
-                });
-                return catalog;
-            };
-            const mockPlanesCat = generateProductCatalog();
-
-            // --- LÓGICA DE LA PÁGINA ---
-
-            // Función para generar un UUID corto de 5 caracteres alfanuméricos para Orden_ID
-            function generateShortUUID() {
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ23456789';
-                let result = '';
-                for (let i = 0; i < 5; i++) {
-                    result += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                return result;
+        // Función para generar un UUID (ID único de cliente)
+        function generateUUID() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 5; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
             }
+            return result;
+        }
 
-            // Función para formatear la fecha y hora a dd/mm/aaaa hh:mm:ss
-            function formatDateTime(date) {
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses son 0-indexados
-                const year = date.getFullYear();
-                const hours = String(date.getHours()).padStart(2, '0');
-                const minutes = String(date.getMinutes()).padStart(2, '0');
-                const seconds = String(date.getSeconds()).padStart(2, '0');
-                return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        // Función para generar una contraseña aleatoria
+        function generateRandomPassword(length = 6) {
+            const charset = "abcefghijkmnoqrstuvwxyzABCEFGHIJKLMNQRSTUVWXYZ23456789";
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * charset.length);
+                password += charset[randomIndex];
             }
+            return password;
+        }
 
-            // Función para poblar el dropdown de Tipo de Producto
-            function populateProductTypes() {
-                const uniqueBaseDescriptions = [...new Set(mockPlanesCat.map(p => p.Plan_Cat_Descripción))];
-                productTypeSelect.innerHTML = '<option value="">Selecciona un tipo de producto</option>';
-                uniqueBaseDescriptions.forEach(desc => {
-                    const option = document.createElement('option');
-                    option.value = desc;
-                    option.textContent = desc;
-                    productTypeSelect.appendChild(option);
-                });
-            }
+        // Función para formatear la fecha y hora a dd/mm/aaaa hh:mm:ss
+        function formatDateTime(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses son 0-indexados
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        }
 
-            // Función para poblar el dropdown de Sabor basado en el tipo de producto seleccionado
-            function populateFlavors() {
-                const selectedBaseProductDescription = productTypeSelect.value;
-                flavorSelect.innerHTML = '<option value="">Selecciona un sabor</option>';
-                flavorSelect.disabled = true;
-                flavorInfo.classList.add('hidden');
+        // Manejador del formulario de registro
+        newUserForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const submitButton = newUserForm.querySelector('button[type="submit"]');
+            setLoading(submitButton, 'Registrando...');
 
-                if (!selectedBaseProductDescription) {
-                    return;
-                }
+            const formData = new FormData(newUserForm);
+            const formDataObj = Object.fromEntries(formData.entries());
 
-                if (selectedBaseProductDescription.includes('Yogurt Griego Natural')) {
-                    const option = document.createElement('option');
-                    option.value = 'Natural';
-                    option.textContent = 'Natural';
-                    flavorSelect.appendChild(option);
-                    flavorSelect.value = 'Natural';
-                    flavorInfo.classList.remove('hidden');
-                } else {
-                    flavorInfo.classList.add('hidden');
-                    const relevantProducts = mockPlanesCat.filter(p =>
-                        p.Plan_Cat_Descripción === selectedBaseProductDescription
-                    );
+            formDataObj.clave = generateRandomPassword();
+            formDataObj.cliente_id = generateUUID();
+            formDataObj.productos_seleccionados_carrito = JSON.stringify([]); // Siempre vacío en esta página
+            formDataObj.cliente_data_reg = formatDateTime(new Date()); // Añadir fecha y hora de registro para Historia
+            formDataObj.cliente_treg = formatDateTime(new Date()); // Añadir fecha y hora de registro para Clientes
 
-                    const flavors = new Set();
-                    relevantProducts.forEach(p => {
-                        const match = p.Plan_Cat_Presentación.match(/Sabor: (.*)/);
-                        if (match && match[1]) {
-                            flavors.add(match[1]);
-                        }
-                    });
+            console.log("Contenido completo del objeto JSON enviado:", formDataObj);
 
-                    Array.from(flavors).sort().forEach(flavor => {
-                        const option = document.createElement('option');
-                        option.value = flavor;
-                        option.textContent = flavor;
-                        flavorSelect.appendChild(option);
-                    });
-                    flavorSelect.disabled = false;
-                }
-            }
-
-            // Función para mostrar mensajes en el contenedor del carrito
-            function showCartMessage(message, type) {
-                cartMessageContainer.textContent = message;
-                cartMessageContainer.className = `mt-4 text-center p-3 rounded-lg border shadow-sm ${type === 'success' ? 'message-success' : (type === 'error' ? 'message-error' : 'message-info')}`;
-                cartMessageContainer.classList.remove('hidden');
-                setTimeout(() => {
-                    cartMessageContainer.classList.add('hidden');
-                }, 1500);
-            }
-
-            // Función para añadir un producto al carrito
-            function addProductToCart() {
-                const selectedProductType = productTypeSelect.value;
-                const selectedHasSugar = hasSugarCheckbox.checked;
-                let selectedFlavor = flavorSelect.value;
-                const quantity = parseInt(quantityInput.value);
-
-                if (!selectedProductType) {
-                    showCartMessage('Por favor, selecciona un tipo de producto.', 'error');
-                    return;
-                }
-
-                if (selectedProductType.includes('Yogurt Griego Natural')) {
-                    selectedFlavor = 'Natural';
-                } else if (!selectedFlavor) {
-                    showCartMessage('Por favor, selecciona un sabor.', 'error');
-                    return;
-                }
-
-                if (isNaN(quantity) || quantity <= 0) {
-                    showCartMessage('La cantidad debe ser un número mayor que cero.', 'error');
-                    return;
-                }
-
-                const targetPresentation = `${selectedHasSugar ? 'C/Azúcar' : 'S/Azúcar'}, Sabor: ${selectedFlavor}`;
-
-                const foundProduct = mockPlanesCat.find(p =>
-                    p.Plan_Cat_Descripción === selectedProductType &&
-                    p.Plan_Cat_Presentación === targetPresentation
-                );
-
-                if (foundProduct) {
-                    const cartItem = {
-                        Tipo: foundProduct.Plan_Cat_Descripción,
-                        Presentacion: foundProduct.Plan_Cat_Presentación,
-                        Costo: foundProduct.Plan_Cat_Costo,
-                        Moneda: foundProduct.Moneda,
-                        Cantidad: quantity
-                    };
-                    cartItems.push(cartItem);
-                    renderCartTable();
-                    showCartMessage('Producto añadido al carrito.', 'success');
-
-                    productTypeSelect.value = '';
-                    hasSugarCheckbox.checked = false;
-                    quantityInput.value = '1';
-                    populateFlavors();
-                } else {
-                    showCartMessage('La combinación de producto y sabor no existe en el catálogo.', 'error');
-                }
-            }
-
-            // Función para eliminar un producto del carrito
-            function removeProductFromCart(posIdToRemove) {
-                cartItems = cartItems.filter(item => item.Order_Pos_ID !== posIdToRemove);
-                cartItems.forEach((item, index) => {
-                    item.Order_Pos_ID = index + 1;
-                });
-                renderCartTable();
-                showCartMessage('Producto eliminado del carrito.', 'info');
-            }
-
-            // Función para renderizar la tabla del carrito
-            function renderCartTable() {
-                cartTableBody.innerHTML = '';
-                let totalCost = 0;
-                let totalQuantity = 0;
-
-                if (cartItems.length === 0) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td colspan="5" class="py-3 px-4 text-center text-xs text-gray-500 italic">El carrito está vacío.</td>`;
-                    cartTableBody.appendChild(row);
-                } else {
-                    cartItems.forEach((item, index) => {
-                        item.Order_Pos_ID = index + 1;
-                        const row = document.createElement('tr');
-                        row.className = `${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b border-gray-200 last:border-b-0`;
-                        row.innerHTML = `
-                            <td class="py-2 px-3 text-xs text-gray-700">${item.Order_Pos_ID}</td>
-                            <td class="py-2 px-3 text-xs text-gray-700">${item.Tipo}<br><span class="text-xs text-gray-500">${item.Presentacion}</span></td>
-                            <td class="py-2 px-3 text-right text-xs text-gray-700">${item.Cantidad}</td>
-                            <td class="py-2 px-3 text-right text-xs text-gray-700">${item.Costo.toFixed(2)}</td>
-                            <td class="py-2 px-3 text-center">
-                                <button type="button" onclick="removeProductFromCart(${item.Order_Pos_ID})" class="text-red-500 hover:text-red-700 transition duration-200 ml-auto shrink-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </td>
-                        `;
-                        cartTableBody.appendChild(row);
-                        totalCost += item.Costo * item.Cantidad;
-                        totalQuantity += item.Cantidad;
-                    });
-                }
-                cartTotalCostElement.textContent = `${totalCost.toFixed(2)}`;
-                cartTotalQuantityElement.textContent = totalQuantity;
-            }
-
-            // Manejador del formulario de selección de productos
-            productSelectionForm.addEventListener('submit', e => {
-                e.preventDefault();
-                const submitButton = productSelectionForm.querySelector('button[type="submit"]');
-                setLoading(submitButton, 'Registrando Selección...');
-
-                if (cartItems.length === 0) {
-                    showResult('El carrito está vacío. Por favor, agrega productos antes de realizar un pedido.', 'info');
-                    resetButton(submitButton, 'Registrar Selección');
-                    return;
-                }
-
-                // Obtener el usuario logueado de sessionStorage
-                const userString = sessionStorage.getItem('loggedInUser');
-                if (!userString) {
-                    showResult('No hay usuario logueado. Por favor, inicia sesión de nuevo.', 'error');
-                    resetButton(submitButton, 'Registrar Selección');
-                    return;
-                }
-                loggedInUser = JSON.parse(userString);
-
-                const formDataObj = {
-                    cliente_id: loggedInUser.Cliente_ID,
-                    nombre: loggedInUser.Cliente_Nombre,
-                    correo: loggedInUser.Cliente_Correo || '',
-                    telefono: loggedInUser.Cliente_Telefono || '',
-                    clave: loggedInUser.Cliente_Clave,
-                    cliente_idx: loggedInUser.Cliente_IDX || '',
-                    orden_id: generateShortUUID(), // Generar Orden_ID aquí
-                    productos_seleccionados_carrito: JSON.stringify(cartItems),
-                    cliente_data_reg: loggedInUser.Cliente_Data_Reg || formatDateTime(new Date()) // Usar la fecha de login/registro o la actual
-                };
-
-                console.log("Contenido completo del objeto JSON enviado:", formDataObj);
-
-                fetch(scriptURL, { method: 'POST', body: JSON.stringify(formDataObj) })
-                    .then(response => response.json())
-                    .then(responseData => {
-                        console.log('Success:', responseData);
-                        if (responseData.status === 'success') {
-                            showRegistrationSuccessModal(formDataObj.nombre, formDataObj.orden_id);
-                        } else {
-                            showResult(`
-                                <h3 class="text-xl font-bold text-red-700 mb-2">Error al Registrar Selección</h3>
-                                <p class="text-gray-700 mt-2">${responseData.message || 'No se pudo completar el registro de la selección. Inténtalo de nuevo.'}</p>
-                            `, 'error');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error!', error.message);
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify(formDataObj) })
+                .then(response => response.json())
+                .then(responseData => {
+                    console.log('Success:', responseData);
+                    if (responseData.status === 'success') {
+                        // Guardar el nuevo usuario en sessionStorage
+                        const newUser = {
+                            Cliente_ID: formDataObj.cliente_id,
+                            Cliente_Nombre: formDataObj.nombre,
+                            Cliente_Clave: formDataObj.clave, // La clave generada
+                            Cliente_Perfil: 'Client', // Por defecto, es un cliente
+                            Cliente_Data_Reg: formDataObj.cliente_data_reg // Guardar la fecha/hora formateada
+                        };
+                        sessionStorage.setItem('loggedInUser', JSON.stringify(newUser));
+                        showRegistrationSuccessModal(formDataObj, formDataObj.cliente_id);
+                    } else {
                         showResult(`
-                            <h3 class="text-xl font-bold text-red-700 mb-2">Error en la Conexión</h3>
-                            <p class="text-gray-700 mt-2">Ocurrió un problema al conectar con el servidor. Inténtalo de nuevo más tarde o contacta soporte.</p>
+                            <h3 class="text-xl font-bold text-red-700 mb-2">Error en el Registro</h3>
+                            <p class="text-gray-700 mt-2">${responseData.message || 'No se pudo completar el registro. Inténtalo de nuevo.'}</p>
                         `, 'error');
-                    })
-                    .finally(() => {
-                        resetButton(submitButton, 'Registrar Selección');
-                    });
-            });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    showResult(`
+                        <h3 class="text-xl font-bold text-red-700 mb-2">Error en la Conexión</h3>
+                        <p class="text-gray-700 mt-2">Ocurrió un problema al conectar con el servidor. Inténtalo de nuevo más tarde o contacta soporte.</p>
+                    `, 'error');
+                })
+                .finally(() => {
+                    resetButton(submitButton, 'Registrarme');
+                });
+        });
 
+        // Función para mostrar el modal de registro con los datos
+        function showRegistrationSuccessModal(formData, clienteId) {
+            showMessageModal('¡Registro Exitoso!', 'Tus datos han sido guardados correctamente:', 'success');
+            modalContentDetails.innerHTML = `
+                <p class="text-sm"><strong>Nombre:</strong> ${formData.nombre}</p>
+                <p class="text-sm"><strong>Correo:</strong> ${formData.correo}</p>
+                <p class="text-sm"><strong>Teléfono:</strong> ${formData.telefono}</p>
+                <p class="text-sm"><strong>Cliente IDX:</strong> ${formData.cliente_idx || 'N/A'}</p>
+                <p class="text-sm"><strong>Clave:</strong> ${formData.clave}</p>
+                <p class="text-sm"><strong>ID Cliente:</strong> ${clienteId}</p>
+                <p class="text-sm"><strong>Fecha Registro (Clientes):</strong> ${formData.cliente_treg}</p>
+                <p class="text-sm"><strong>Fecha Registro (Historia):</strong> ${formData.cliente_data_reg}</p>
+            `;
+            registrationModal.classList.remove('hidden');
+            setTimeout(() => {
+                registrationModal.querySelector('.modal-content').classList.add('show');
+            }, 10);
+        }
 
-            // Función para mostrar el modal de registro de selección
-            function showRegistrationSuccessModal(clienteNombre, ordenId) {
-                showMessageModal('¡Selección Registrada!', 'Tu pedido ha sido registrado correctamente:', 'success');
-                modalContentDetails.innerHTML = `
-                    <p class="text-sm"><strong>Nombre Cliente:</strong> ${clienteNombre}</p>
-                    <p class="text-sm"><strong>Orden ID:</strong> ${ordenId}</p>
-                    <h4 class="font-semibold mt-4 mb-2">Productos Seleccionados:</h4>
-                    <ul class="list-disc pl-5 space-y-1 text-sm">
-                        ${cartItems.map(item => `<li>${item.Tipo} - ${item.Presentacion} (x${item.Cantidad}) - ${item.Costo.toFixed(2)} USD</li>`).join('')}
-                    </ul>
-                    <p class="font-bold text-right text-sm mt-2">Total Pedido: ${cartItems.reduce((sum, item) => sum + (item.Costo * item.Cantidad), 0).toFixed(2)} USD</p>
-                `;
-                registrationModal.classList.remove('hidden');
-                setTimeout(() => {
-                    registrationModal.querySelector('.modal-content').classList.add('show');
-                }, 10);
+        // Función para manejar el clic en el botón "Aceptar" del modal
+        function handleAcceptRegistration() {
+            registrationModal.querySelector('.modal-content').classList.remove('show');
+            setTimeout(() => {
+                registrationModal.classList.add('hidden');
+                newUserForm.reset();
+                resultContainer.innerHTML = '';
+                resultContainer.className = 'mt-8 text-center p-4 rounded-xl transition-all duration-300 ease-in-out';
+                window.location.href = 'catalog.html'; // Redirigir al catálogo después de aceptar
+            }, 300);
+        }
+
+        // Funciones de utilidad para la UI (mostrar carga, restablecer botón, mostrar resultados, modal)
+        function setLoading(button, text) {
+            button.disabled = true;
+            button.classList.add('opacity-75', 'cursor-not-allowed');
+            button.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>${text}`;
+        }
+
+        function resetButton(button, text) {
+            button.disabled = false;
+            button.classList.remove('opacity-75', 'cursor-not-allowed');
+            button.innerHTML = text;
+        }
+
+        function showResult(htmlContent, type) {
+            resultContainer.innerHTML = htmlContent;
+            if (type === 'success') {
+                resultContainer.classList.add('bg-green-100', 'border-green-300', 'text-green-800', 'shadow-md');
+                resultContainer.classList.remove('bg-red-100', 'border-red-300', 'text-red-800');
+            } else {
+                resultContainer.classList.add('bg-red-100', 'border-red-300', 'text-red-800', 'shadow-md');
+                resultContainer.classList.remove('bg-green-100', 'border-green-300', 'text-green-800');
             }
+        }
 
-            // Función para manejar el clic en el botón "Aceptar" del modal de registro/pedido
-            window.handleAcceptRegistration = function() { // Hacerla global para que el onclick funcione
-                registrationModal.querySelector('.modal-content').classList.remove('show');
-                setTimeout(() => {
-                    registrationModal.classList.add('hidden');
-                    cartItems = []; // Limpiar el carrito
-                    renderCartTable(); // Renderizar la tabla del carrito vacía
-                    // No hay redirección aquí, ya que el pedido se ha registrado
-                    // y el usuario puede seguir añadiendo productos o navegar al dashboard.
-                }, 300);
-            };
+        function showMessageModal(title, message, type) {
+            const modal = document.getElementById('registration-modal');
+            const modalTitleElement = modal.querySelector('#modal-title');
+            const modalMessageElement = modal.querySelector('#modal-message');
+            const modalContent = modal.querySelector('.modal-content');
 
-            // Funciones de utilidad para la UI (mostrar carga, restablecer botón, mostrar resultados, modal)
-            function setLoading(button, text) {
-                button.disabled = true;
-                button.classList.add('opacity-75', 'cursor-not-allowed');
-                button.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>${text}`;
+            if (modalTitleElement) {
+                modalTitleElement.textContent = title;
+                modalTitleElement.classList.remove('text-green-700', 'text-red-700', 'text-blue-700');
+                if (type === 'success') { modalTitleElement.classList.add('text-green-700'); }
+                else if (type === 'error') { modalTitleElement.classList.add('text-red-700'); }
+                else if (type === 'info') { modalTitleElement.classList.add('text-blue-700'); }
             }
-
-            function resetButton(button, text) {
-                button.disabled = false;
-                button.classList.remove('opacity-75', 'cursor-not-allowed');
-                button.innerHTML = text;
+            if (modalMessageElement) {
+                modalMessageElement.textContent = message;
+                modalMessageElement.classList.remove('text-gray-700');
+                if (type === 'success') { modalMessageElement.classList.add('text-green-800'); }
+                else if (type === 'error') { modalMessageElement.classList.add('text-red-800'); }
+                else if (type === 'info') { modalMessageElement.classList.add('text-blue-800'); }
+                else { modalMessageElement.classList.add('text-gray-700'); }
             }
+            modalContent.classList.remove('bg-green-100', 'bg-red-100', 'bg-blue-100', 'bg-white');
+            if (type === 'success') { modalContent.classList.add('bg-green-100'); }
+            else if (type === 'error') { modalContent.classList.add('bg-red-100'); }
+            else if (type === 'info') { modalContent.classList.add('bg-blue-100'); }
+            else { modalContent.classList.add('bg-white'); }
 
-            function showResult(htmlContent, type) {
-                resultContainer.innerHTML = htmlContent;
-                if (type === 'success') {
-                    resultContainer.classList.add('bg-green-100', 'border-green-300', 'text-green-800', 'shadow-md');
-                    resultContainer.classList.remove('bg-red-100', 'border-red-300', 'text-red-800');
-                } else {
-                    resultContainer.classList.add('bg-red-100', 'border-red-300', 'text-red-800', 'shadow-md');
-                    resultContainer.classList.remove('bg-green-100', 'border-green-300', 'text-green-800');
-                }
-                resultContainer.classList.remove('hidden');
-                setTimeout(() => {
-                    resultContainer.classList.add('hidden');
-                }, 3000);
-            }
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.add('show');
+            }, 10);
+        }
 
-            function showMessageModal(title, message, type) {
-                const modal = document.getElementById('registration-modal'); // Reutilizando el modal de registro
-                const modalTitleElement = modal.querySelector('#modal-title');
-                const modalMessageElement = modal.querySelector('#modal-message');
-                const modalContent = modal.querySelector('.modal-content');
-
-                if (modalTitleElement) {
-                    modalTitleElement.textContent = title;
-                    modalTitleElement.classList.remove('text-green-700', 'text-red-700', 'text-blue-700');
-                    if (type === 'success') { modalTitleElement.classList.add('text-green-700'); }
-                    else if (type === 'error') { modalTitleElement.classList.add('text-red-700'); }
-                    else if (type === 'info') { modalTitleElement.classList.add('text-blue-700'); }
-                }
-                if (modalMessageElement) {
-                    modalMessageElement.textContent = message;
-                    modalMessageElement.classList.remove('text-gray-700');
-                    if (type === 'success') { modalMessageElement.classList.add('text-green-800'); }
-                    else if (type === 'error') { modalMessageElement.classList.add('text-red-800'); }
-                    else if (type === 'info') { modalMessageElement.classList.add('text-blue-800'); }
-                    else { modalMessageElement.classList.add('text-gray-700'); }
-                }
-                modalContent.classList.remove('bg-green-100', 'bg-red-100', 'bg-blue-100', 'bg-white');
-                if (type === 'success') { modalContent.classList.add('bg-green-100'); }
-                else if (type === 'error') { modalContent.classList.add('bg-red-100'); }
-                else if (type === 'info') { modalContent.classList.add('bg-blue-100'); }
-                else { modalContent.classList.add('bg-white'); }
-
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    modalContent.classList.add('show');
-                }, 10);
-            }
-
-            window.closeMessageModal = function() {
-                const modal = document.getElementById('registration-modal');
-                const modalContent = modal.querySelector('.modal-content');
-                modalContent.classList.remove('show');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                }, 300);
-            };
-
-            // --- Inicialización al cargar la página ---
-            document.addEventListener('DOMContentLoaded', () => {
-                // Verificar si el usuario está logueado
-                const userString = sessionStorage.getItem('loggedInUser');
-                if (!userString) {
-                    // Si no hay usuario logueado, redirigir al login
-                    window.location.href = 'index.html';
-                    return;
-                }
-                loggedInUser = JSON.parse(userString);
-                welcomeMessage.textContent = `Bienvenido, ${loggedInUser.Cliente_Nombre}.`;
-
-                populateProductTypes();
-                populateFlavors();
-                renderCartTable();
-            });
-
-            // Event Listeners
-            productTypeSelect.addEventListener('change', populateFlavors);
-            addToCartButton.addEventListener('click', addProductToCart);
-            
-            // Modificado: Al hacer clic en "Regresar", muestra el modal de confirmación
-            backButton.addEventListener('click', () => {
-                confirmExitModal.classList.remove('hidden');
-                setTimeout(() => {
-                    confirmExitModal.querySelector('.modal-content').classList.add('show');
-                }, 10);
-            });
-
-            // Lógica para el botón "Aceptar" del modal de confirmación de salida
-            confirmExitAcceptBtn.addEventListener('click', () => {
-                sessionStorage.removeItem('loggedInUser'); // Limpiar sesión
-                window.location.href = 'index.html'; // Redirigir al login
-            });
-
-            // Lógica para el botón "Cancelar" del modal de confirmación de salida
-            confirmExitCancelBtn.addEventListener('click', () => {
-                confirmExitModal.querySelector('.modal-content').classList.remove('show');
-                setTimeout(() => {
-                    confirmExitModal.classList.add('hidden');
-                }, 300);
-            });
-
-            // Lógica para el botón "Cerrar Sesión" (ya existente)
-            logoutButton.addEventListener('click', () => {
-                sessionStorage.removeItem('loggedInUser'); // Limpiar sesión
-                window.location.href = 'index.html'; // Redirigir al login
-            });
-        </script>
-    </body>
+        window.closeMessageModal = function() {
+            const modal = document.getElementById('registration-modal');
+            const modalContent = modal.querySelector('.modal-content');
+            modalContent.classList.remove('show');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        };
+    </script>
+</body>
 </html>
