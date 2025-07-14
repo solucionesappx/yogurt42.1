@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Nuevo Usuario</title>
+    <title>Iniciar Sesión</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,117 +13,208 @@
         .btn-animation { transition: all 0.2s ease-in-out; }
         .btn-animation:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
         .input-focus-animation:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); }
-        .modal-overlay { background-color: rgba(0, 0, 0, 0.5); z-index: 999; }
-        .modal-content { z-index: 1000; transform: translateY(-20px); opacity: 0; transition: opacity 0.3s ease-out, transform 0.3s ease-out; }
-        .modal-content.show { opacity: 1; transform: translateY(0); }
-        /* Eliminadas las reglas CSS específicas para details/summary ya que no se usarán */
         .message-success { background-color: #d1fae5; border-color: #a7f3d0; color: #065f46; }
         .message-error { background-color: #fee2e2; border-color: #fca5a5; color: #991b1b; }
         .message-info { background-color: #e0f2fe; border-color: #93c5fd; color: #1e40af; }
+        /* Estilos para los modales */
+        .modal {
+            display: none; /* Oculto por defecto */
+            position: fixed; /* Posición fija */
+            z-index: 1000; /* Por encima de todo */
+            left: 0;
+            top: 0;
+            width: 100%; /* Ancho completo */
+            height: 100%; /* Alto completo */
+            overflow: auto; /* Habilitar scroll si es necesario */
+            background-color: rgba(0,0,0,0.4); /* Fondo semi-transparente */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center min-h-screen p-4">
 
     <div class="w-full max-w-lg mx-auto">
         <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-10 border border-gray-100">
-            <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Registrar Nuevo Usuario</h1>
-            <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto">Completa el formulario para crear una nueva cuenta.</p>
+            <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Iniciar Sesión</h1>
+            <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto">Ingresa tus credenciales para acceder.</p>
 
-            <!-- Navigation Buttons -->
-            <div class="flex justify-center space-x-4 mb-8">
-                <button id="show-login-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-gray-200 text-gray-800 shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">Iniciar Sesión</button>
-                <button id="show-register-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-indigo-600 text-white shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Registrar Usuario</button>
-            </div>
-
-            <!-- Registration Form Container -->
-            <div id="registration-section" class="form-container">
-                <form id="newUserForm">
-                    <!-- Sección DATOS BÁSICOS (anteriormente un <details>, ahora directamente visible) -->
-                    <div id="datos-basicos-content" class="space-y-5 mb-5 rounded-xl shadow-sm border border-gray-200 bg-white p-6">
-                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Datos Básicos</h2>
-                        <div>
-                            <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
-                            <input type="text" id="nombre" name="nombre" required
-                                   class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
-                        </div>
-                        <div>
-                            <label for="correo" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
-                            <input type="email" id="correo" name="correo" 
-                                   class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
-                        </div>
-                        <div>
-                            <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                            <input type="tel" id="telefono" name="telefono" 
-                                   class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800">
-                        </div>
-                        <div>
-                            <label for="cliente_idx" class="block text-sm font-medium text-gray-700 mb-1">Cédula Identidad</label>
-                            <input type="text" id="cliente_idx" name="cliente_idx" required
-                                   class="input-focus-animation mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 text-gray-800"
-                                   placeholder="Ej. ABC12345">
-                        </div>
+            <!-- Login Form Container -->
+            <div id="login-section" class="form-container">
+                <div class="bg-white p-8 rounded-xl w-full">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="login-username">
+                            Nombre del Cliente
+                        </label>
+                        <input
+                            type="text"
+                            id="login-username"
+                            class="input-focus-animation shadow appearance-none border rounded-lg w-full py-2.5 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            placeholder="Ej. Juan Perez"
+                        >
                     </div>
-
-                    <button type="submit" class="btn-animation w-full mt-8 flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Registrarme
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="login-password">
+                            Clave
+                        </label>
+                        <input
+                            type="password"
+                            id="login-password"
+                            class="input-focus-animation shadow appearance-none border rounded-lg w-full py-2.5 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                            placeholder="Tu clave secreta"
+                        >
+                    </div>
+                    <button
+                        id="login-button"
+                        class="btn-animation w-full flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                        Iniciar Sesión
                     </button>
-                </form>
+                    <!-- Botón para registrar usuario, ahora visible y con estilos -->
+                    <button
+                        id="show-register-form-btn"
+                        class="btn-animation w-full flex items-center justify-center py-3.5 px-4 mt-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-gray-800 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+                    >
+                        Registrar Usuario
+                    </button>
+                    <div class="mt-4 text-center">
+                        <a href="#" id="forgot-password-link" class="text-blue-600 hover:underline text-sm">¿Olvidaste tu contraseña?</a>
+                    </div>
+                </div>
             </div>
 
-            <!-- Área para mostrar mensajes y resultados del formulario de registro -->
-            <div id="result-container" class="mt-8 text-center p-4 rounded-xl transition-all duration-300 ease-in-out"></div>
+            <!-- Área para mostrar mensajes de login -->
+            <div id="message-container" class="mt-8 text-center p-4 rounded-xl transition-all duration-300 ease-in-out hidden"></div>
         </div>
     </div>
 
-    <!-- Estructura del Modal (Pop-up) -->
-    <div id="registration-modal" class="fixed inset-0 flex items-center justify-center hidden modal-overlay">
-        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full modal-content">
-            <h3 class="text-2xl font-bold text-green-700 text-center mb-4" id="modal-title"></h3>
-            <p class="text-gray-700 text-center mb-4" id="modal-message"></p>
-            <div id="modal-content-details" class="text-left bg-green-50 text-green-800 p-4 rounded-lg space-y-2 mb-6">
-                <!-- Los detalles del registro se insertarán aquí por JavaScript -->
+    <!-- Modal de Recuperación de Contraseña -->
+    <div id="recovery-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-recovery-modal">&times;</span>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Recuperar/Generar Contraseña</h2>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="recovery-username">
+                    Nombre del Cliente
+                </label>
+                <input
+                    type="text"
+                    id="recovery-username"
+                    class="input-focus-animation shadow appearance-none border rounded-lg w-full py-2.5 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    placeholder="Ej. Juan Perez"
+                >
             </div>
-            <button type="button" onclick="handleAcceptRegistration()" class="btn-animation w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="recovery-idx">
+                    Cédula de Identidad (CI)
+                </label>
+                <input
+                    type="text"
+                    id="recovery-idx"
+                    class="input-focus-animation shadow appearance-none border rounded-lg w-full py-2.5 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                    placeholder="CI de cliente"
+                >
+            </div>
+            <div class="flex space-x-4 mb-4">
+                <button
+                    id="recover-password-button"
+                    class="btn-animation w-1/2 flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                >
+                    Recuperar Contraseña
+                </button>
+                <button
+                    id="generate-new-password-button"
+                    class="btn-animation w-1/2 flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-gray-800 bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+                >
+                    Generar Contraseña
+                </button>
+            </div>
+            <div id="recovery-message-container" class="mt-4 text-center p-3 rounded-xl transition-all duration-300 ease-in-out hidden"></div>
+        </div>
+    </div>
+
+    <!-- Nuevo Modal para Mostrar Contraseña -->
+    <div id="password-display-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center" id="password-display-title">Tu Contraseña</h2>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="displayed-password">
+                    Contraseña:
+                </label>
+                <input
+                    type="text"
+                    id="displayed-password"
+                    class="shadow appearance-none border rounded-lg w-full py-2.5 px-3 text-gray-700 leading-tight bg-gray-100 cursor-text"
+                    readonly
+                >
+            </div>
+            <button
+                id="accept-password-button"
+                class="btn-animation w-full flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
                 Aceptar
             </button>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURACIÓN -ref DRIVE App Registro Datos (script) archivo: X42 Yogurt YLOC - ID: 1UJoON7v-HdnkVet0LXGYR5GnvNiSojYSoYCBUQDY8a4
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyr4qsvZq8_yVs5MfnuVmfK1mpIM4b-kuw_Y7Cc9QHdtPJ9bE0vqqbucAsWRpZqjXWw/exec'; // ¡Reemplaza con tu URL de Google Apps Script!
+        // --- CONFIGURACIÓN --- ref DRIVE App Lectura Datos (script) - X42 Yogurt YLOC ID: 1UJoON7v-HdnkVet0LXGYR5GnvNiSojYSoYCBUQDY8a4
+        
+        // ¡IMPORTANTE! Reemplaza esta URL con la URL de tu Google Apps Script Web App desplegada.
+        const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9FHTZwiU0LRl9cxqq_r9z0b7Mb9BjEabonpHeSj5zxZvGMEG6G41Zuz0wiKheaTAr/exec';
 
-        // Elementos del DOM del formulario de registro
-        const newUserForm = document.getElementById('newUserForm');
-        const resultContainer = document.getElementById('result-container');
-        const registrationModal = document.getElementById('registration-modal');
-        const modalContentDetails = document.getElementById('modal-content-details');
+        // Elementos del DOM
+        const loginUsernameInput = document.getElementById('login-username');
+        const loginPasswordInput = document.getElementById('login-password');
+        const loginButton = document.getElementById('login-button');
+        const messageContainer = document.getElementById('message-container');
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
+        const showRegisterFormBtn = document.getElementById('show-register-form-btn');
 
-        // Navegación
-        document.getElementById('show-login-form-btn').addEventListener('click', () => {
-            window.location.href = 'index.html';
-        });
+        // Elementos del Modal de Recuperación
+        const recoveryModal = document.getElementById('recovery-modal');
+        const closeRecoveryModalButton = document.getElementById('close-recovery-modal');
+        const recoveryUsernameInput = document.getElementById('recovery-username');
+        const recoveryIdxInput = document.getElementById('recovery-idx');
+        const recoverPasswordButton = document.getElementById('recover-password-button');
+        const generateNewPasswordButton = document.getElementById('generate-new-password-button'); // Nuevo botón
+        const recoveryMessageContainer = document.getElementById('recovery-message-container');
 
-        // Función para generar un UUID (ID único de cliente)
-        function generateUUID() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789';
-            let result = '';
-            for (let i = 0; i < 5; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
-        }
-
-        // Función para generar una contraseña aleatoria
-        function generateRandomPassword(length = 6) {
-            const charset = "abcefghijkmnoqrstuvwxyzABCEFGHIJKLMNQRSTUVWXYZ23456789";
-            let password = "";
-            for (let i = 0; i < length; i++) {
-                const randomIndex = Math.floor(Math.random() * charset.length);
-                password += charset[randomIndex];
-            }
-            return password;
-        }
+        // Elementos del Modal de Mostrar Contraseña
+        const passwordDisplayModal = document.getElementById('password-display-modal');
+        const passwordDisplayTitle = document.getElementById('password-display-title');
+        const displayedPasswordInput = document.getElementById('displayed-password');
+        const acceptPasswordButton = document.getElementById('accept-password-button');
 
         // Función para formatear la fecha y hora a dd/mm/aaaa hh:mm:ss
         function formatDateTime(date) {
@@ -136,153 +227,146 @@
             return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
         }
 
-        // Manejador del formulario de registro
-        newUserForm.addEventListener('submit', e => {
-            e.preventDefault();
-            const submitButton = newUserForm.querySelector('button[type="submit"]');
-            setLoading(submitButton, 'Registrando...');
+        // Función para mostrar mensajes en un contenedor específico
+        function showMessage(container, message, type) {
+            container.textContent = message;
+            container.className = `mt-4 text-center p-3 rounded-xl transition-all duration-300 ease-in-out ${type === 'success' ? 'message-success' : (type === 'error' ? 'message-error' : 'message-info')}`;
+            container.classList.remove('hidden');
+            setTimeout(() => {
+                container.classList.add('hidden');
+            }, 5000); // Ocultar después de 5 segundos
+        }
 
-            const formData = new FormData(newUserForm);
-            const formDataObj = Object.fromEntries(formData.entries());
+        // Función para mostrar el modal de contraseña
+        function showPasswordDisplayModal(password, title = 'Tu Contraseña') {
+            passwordDisplayTitle.textContent = title;
+            displayedPasswordInput.value = password;
+            passwordDisplayModal.style.display = 'flex';
+        }
 
-            formDataObj.clave = generateRandomPassword();
-            formDataObj.cliente_id = generateUUID();
-            formDataObj.productos_seleccionados_carrito = JSON.stringify([]); // Siempre vacío en esta página
-            formDataObj.cliente_data_reg = formatDateTime(new Date()); // Añadir fecha y hora de registro para Historia
-            formDataObj.cliente_treg = formatDateTime(new Date()); // Añadir fecha y hora de registro para Clientes
+        // Lógica del Login
+        loginButton.addEventListener('click', async () => {
+            const username = loginUsernameInput.value.trim();
+            const password = loginPasswordInput.value.trim();
 
-            console.log("Contenido completo del objeto JSON enviado:", formDataObj);
+            if (!username || !password) {
+                showMessage(messageContainer, 'Por favor, ingresa tu nombre de usuario y clave.', 'error');
+                return;
+            }
 
-            fetch(scriptURL, { method: 'POST', body: JSON.stringify(formDataObj) })
-                .then(response => response.json())
-                .then(responseData => {
-                    console.log('Success:', responseData);
-                    if (responseData.status === 'success') {
-                        // Guardar el nuevo usuario en sessionStorage
-                        const newUser = {
-                            Cliente_ID: formDataObj.cliente_id,
-                            Cliente_Nombre: formDataObj.nombre,
-                            Cliente_Clave: formDataObj.clave, // La clave generada
-                            Cliente_Perfil: 'Client', // Por defecto, es un cliente
-                            Cliente_Data_Reg: formDataObj.cliente_data_reg // Guardar la fecha/hora formateada
-                        };
-                        sessionStorage.setItem('loggedInUser', JSON.stringify(newUser));
-                        showRegistrationSuccessModal(formDataObj, formDataObj.cliente_id);
-                    } else {
-                        showResult(`
-                            <h3 class="text-xl font-bold text-red-700 mb-2">Error en el Registro</h3>
-                            <p class="text-gray-700 mt-2">${responseData.message || 'No se pudo completar el registro. Inténtalo de nuevo.'}</p>
-                        `, 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error!', error.message);
-                    showResult(`
-                        <h3 class="text-xl font-bold text-red-700 mb-2">Error en la Conexión</h3>
-                        <p class="text-gray-700 mt-2">Ocurrió un problema al conectar con el servidor. Inténtalo de nuevo más tarde o contacta soporte.</p>
-                    `, 'error');
-                })
-                .finally(() => {
-                    resetButton(submitButton, 'Registrarme');
-                });
+            showMessage(messageContainer, 'Verificando credenciales...', 'info');
+
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const loggedInUserWithTimestamp = {
+                        ...data.user,
+                        Cliente_Data_Reg: formatDateTime(new Date())
+                    };
+                    sessionStorage.setItem('loggedInUser', JSON.stringify(loggedInUserWithTimestamp));
+                    
+                    console.log('Usuario logueado y datos guardados en sessionStorage:', loggedInUserWithTimestamp);
+
+                    showMessage(messageContainer, '¡Inicio de Sesión Exitoso! Redirigiendo...', 'success');
+                    window.location.href = './catalog.html'; // Se cambió a ruta relativa explícita
+                } else {
+                    showMessage(messageContainer, data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error al iniciar sesión:', error);
+                showMessage(messageContainer, 'Error de conexión. Intenta de nuevo más tarde.', 'error');
+            }
         });
 
-        // Función para mostrar el modal de registro con los datos
-        function showRegistrationSuccessModal(formData, clienteId) {
-            showMessageModal('¡Registro Exitoso!', 'Tus datos han sido guardados correctamente:', 'success');
-            modalContentDetails.innerHTML = `
-                <p class="text-sm"><strong>Nombre:</strong> ${formData.nombre}</p>
-                <p class="text-sm"><strong>Correo:</strong> ${formData.correo}</p>
-                <p class="text-sm"><strong>Teléfono:</strong> ${formData.telefono}</p>
-                <p class="text-sm"><strong>Cliente IDX:</strong> ${formData.cliente_idx || 'N/A'}</p>
-                <p class="text-sm"><strong>Clave:</strong> ${formData.clave}</p>
-                <p class="text-sm"><strong>ID Cliente:</strong> ${clienteId}</p>
-                <p class="text-sm"><strong>Fecha Registro:</strong> ${formData.cliente_treg}</p>
-                
-            `;
-            registrationModal.classList.remove('hidden');
-            setTimeout(() => {
-                registrationModal.querySelector('.modal-content').classList.add('show');
-            }, 10);
-        }
+        // Lógica para abrir el modal de recuperación/generación de contraseña
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            recoveryModal.style.display = 'flex';
+            recoveryMessageContainer.classList.add('hidden');
+            recoveryUsernameInput.value = '';
+            recoveryIdxInput.value = '';
+        });
 
-        // Función para manejar el clic en el botón "Aceptar" del modal //*<p class="text-sm"><strong>Fecha Registro (Historia):</strong> ${formData.cliente_data_reg}</p>
-        function handleAcceptRegistration() {
-            registrationModal.querySelector('.modal-content').classList.remove('show');
-            setTimeout(() => {
-                registrationModal.classList.add('hidden');
-                newUserForm.reset();
-                resultContainer.innerHTML = '';
-                resultContainer.className = 'mt-8 text-center p-4 rounded-xl transition-all duration-300 ease-in-out';
-                window.location.href = 'catalog.html'; // Redirigir al catálogo después de aceptar
-            }, 300);
-        }
+        // Lógica para cerrar el modal de recuperación
+        closeRecoveryModalButton.addEventListener('click', () => {
+            recoveryModal.style.display = 'none';
+        });
 
-        // Funciones de utilidad para la UI (mostrar carga, restablecer botón, mostrar resultados, modal)
-        function setLoading(button, text) {
-            button.disabled = true;
-            button.classList.add('opacity-75', 'cursor-not-allowed');
-            button.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>${text}`;
-        }
-
-        function resetButton(button, text) {
-            button.disabled = false;
-            button.classList.remove('opacity-75', 'cursor-not-allowed');
-            button.innerHTML = text;
-        }
-
-        function showResult(htmlContent, type) {
-            resultContainer.innerHTML = htmlContent;
-            if (type === 'success') {
-                resultContainer.classList.add('bg-green-100', 'border-green-300', 'text-green-800', 'shadow-md');
-                resultContainer.classList.remove('bg-red-100', 'border-red-300', 'text-red-800');
-            } else {
-                resultContainer.classList.add('bg-red-100', 'border-red-300', 'text-red-800', 'shadow-md');
-                resultContainer.classList.remove('bg-green-100', 'border-green-300', 'text-green-800');
+        // Cerrar el modal de recuperación si se hace clic fuera del contenido
+        window.addEventListener('click', (event) => {
+            if (event.target === recoveryModal) {
+                recoveryModal.style.display = 'none';
             }
-        }
+        });
 
-        function showMessageModal(title, message, type) {
-            const modal = document.getElementById('registration-modal');
-            const modalTitleElement = modal.querySelector('#modal-title');
-            const modalMessageElement = modal.querySelector('#modal-message');
-            const modalContent = modal.querySelector('.modal-content');
+        // Lógica para cerrar el modal de mostrar contraseña
+        acceptPasswordButton.addEventListener('click', () => {
+            passwordDisplayModal.style.display = 'none';
+            recoveryModal.style.display = 'none'; // También cierra el modal de recuperación
+        });
 
-            if (modalTitleElement) {
-                modalTitleElement.textContent = title;
-                modalTitleElement.classList.remove('text-green-700', 'text-red-700', 'text-blue-700');
-                if (type === 'success') { modalTitleElement.classList.add('text-green-700'); }
-                else if (type === 'error') { modalTitleElement.classList.add('text-red-700'); }
-                else if (type === 'info') { modalTitleElement.classList.add('text-blue-700'); }
+        // Lógica de Recuperación de Contraseña (mostrar existente)
+        recoverPasswordButton.addEventListener('click', async () => {
+            const username = recoveryUsernameInput.value.trim();
+            const idx = recoveryIdxInput.value.trim();
+
+            if (!username || !idx) {
+                showMessage(recoveryMessageContainer, 'Por favor, ingresa tu nombre de usuario y Cliente ID.', 'error');
+                return;
             }
-            if (modalMessageElement) {
-                modalMessageElement.textContent = message;
-                modalMessageElement.classList.remove('text-gray-700');
-                if (type === 'success') { modalMessageElement.classList.add('text-green-800'); }
-                else if (type === 'error') { modalMessageElement.classList.add('text-red-800'); }
-                else if (type === 'info') { modalMessageElement.classList.add('text-blue-800'); }
-                else { modalMessageElement.classList.add('text-gray-700'); }
+
+            showMessage(recoveryMessageContainer, 'Buscando contraseña existente...', 'info');
+
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=recoverPassword&username=${encodeURIComponent(username)}&idx=${encodeURIComponent(idx)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    showPasswordDisplayModal(data.password, 'Tu Contraseña Existente');
+                    showMessage(recoveryMessageContainer, 'Contraseña recuperada con éxito.', 'success');
+                } else {
+                    showMessage(recoveryMessageContainer, data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error al recuperar contraseña:', error);
+                showMessage(recoveryMessageContainer, 'Error de conexión. Intenta de nuevo más tarde.', 'error');
             }
-            modalContent.classList.remove('bg-green-100', 'bg-red-100', 'bg-blue-100', 'bg-white');
-            if (type === 'success') { modalContent.classList.add('bg-green-100'); }
-            else if (type === 'error') { modalContent.classList.add('bg-red-100'); }
-            else if (type === 'info') { modalContent.classList.add('bg-blue-100'); }
-            else { modalContent.classList.add('bg-white'); }
+        });
 
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modalContent.classList.add('show');
-            }, 10);
-        }
+        // Lógica para Generar Nueva Contraseña
+        generateNewPasswordButton.addEventListener('click', async () => {
+            const username = recoveryUsernameInput.value.trim();
+            const idx = recoveryIdxInput.value.trim();
 
-        window.closeMessageModal = function() {
-            const modal = document.getElementById('registration-modal');
-            const modalContent = modal.querySelector('.modal-content');
-            modalContent.classList.remove('show');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-        };
+            if (!username || !idx) {
+                showMessage(recoveryMessageContainer, 'Por favor, ingresa tu nombre de usuario y Cliente ID para generar una nueva clave.', 'error');
+                return;
+            }
+
+            showMessage(recoveryMessageContainer, 'Generando y actualizando nueva contraseña...', 'info');
+
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=generatePassword&username=${encodeURIComponent(username)}&idx=${encodeURIComponent(idx)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    showPasswordDisplayModal(data.password, 'Tu Nueva Contraseña Generada');
+                    showMessage(recoveryMessageContainer, 'Nueva contraseña generada y actualizada con éxito.', 'success');
+                } else {
+                    showMessage(recoveryMessageContainer, data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error al generar nueva contraseña:', error);
+                showMessage(recoveryMessageContainer, 'Error de conexión. Intenta de nuevo más tarde.', 'error');
+            }
+        });
+
+        // Navegación al formulario de registro
+        showRegisterFormBtn.addEventListener('click', () => {
+            window.location.href = './register.html'; // Se cambió a ruta relativa explícita
+        });
     </script>
 </body>
 </html>
