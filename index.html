@@ -16,6 +16,50 @@
         .message-success { background-color: #d1fae5; border-color: #a7f3d0; color: #065f46; }
         .message-error { background-color: #fee2e2; border-color: #fca5a5; color: #991b1b; }
         .message-info { background-color: #e0f2fe; border-color: #93c5fd; color: #1e40af; }
+        /* Estilos para el modal de recuperación de contraseña */
+        .modal {
+            display: none; /* Oculto por defecto */
+            position: fixed; /* Posición fija */
+            z-index: 1000; /* Por encima de todo */
+            left: 0;
+            top: 0;
+            width: 100%; /* Ancho completo */
+            height: 100%; /* Alto completo */
+            overflow: auto; /* Habilitar scroll si es necesario */
+            background-color: rgba(0,0,0,0.4); /* Fondo semi-transparente */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center min-h-screen p-4">
@@ -25,16 +69,9 @@
             <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Iniciar Sesión</h1>
             <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto">Ingresa tus credenciales para acceder.</p>
 
-            <!-- Navigation Buttons 
-            <div class="flex justify-center space-x-4 mb-8">
-                <button id="show-login-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-blue-600 text-white shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Iniciar Sesión</button>
-                <button id="show-register-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-gray-200 text-gray-800 shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">Registrar Usuario</button>
-            </div> -->
-
             <!-- Login Form Container -->
             <div id="login-section" class="form-container">
                 <div class="bg-white p-8 rounded-xl w-full">
-            <!--        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Iniciar Sesión</h2>   -->
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="login-username">
                             Nombre del Cliente
@@ -63,13 +100,16 @@
                     >
                         Iniciar Sesión
                     </button>
-                    <button 
+                    <!-- Botón para registrar usuario, ahora visible y con estilos -->
+                    <button
                         id="show-register-form-btn"
-                        class="btn-animation w-full flex items-center justify-center py-4.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-blue-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                        class="btn-animation w-full flex items-center justify-center py-3.5 px-4 mt-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-gray-800 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
                     >
                         Registrar Usuario
                     </button>
-         
+                    <div class="mt-4 text-center">
+                        <a href="#" id="forgot-password-link" class="text-blue-600 hover:underline text-sm">¿Olvidaste tu contraseña?</a>
+                    </div>
                 </div>
             </div>
 
@@ -78,20 +118,63 @@
         </div>
     </div>
 
+    <!-- Modal de Recuperación de Contraseña -->
+    <div id="recovery-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Recuperar Contraseña</h2>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="recovery-username">
+                    Nombre del Cliente
+                </label>
+                <input
+                    type="text"
+                    id="recovery-username"
+                    class="input-focus-animation shadow appearance-none border rounded-lg w-full py-2.5 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    placeholder="Ej. Juan Perez"
+                >
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="recovery-idx">
+                    Cliente ID (IDX)
+                </label>
+                <input
+                    type="text"
+                    id="recovery-idx"
+                    class="input-focus-animation shadow appearance-none border rounded-lg w-full py-2.5 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                    placeholder="Tu ID de cliente"
+                >
+            </div>
+            <button
+                id="recover-password-button"
+                class="btn-animation w-full flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+            >
+                Recuperar Contraseña
+            </button>
+            <div id="recovery-message-container" class="mt-4 text-center p-3 rounded-xl transition-all duration-300 ease-in-out hidden"></div>
+        </div>
+    </div>
+
     <script>
-        // --- DATOS MOCK DE CLIENTES (para el login) ---
-        const mockClientes = [
-            { Cliente_ID: 1001, Cliente_Clave: 'clave123', Cliente_Nombre: 'Juan Perez', Cliente_Status: 'Activo', Cliente_Perfil: 'Admin' },
-            { Cliente_ID: 1002, Cliente_Clave: 'pass456', Cliente_Nombre: 'Maria Lopez', Cliente_Status: 'Activo', Cliente_Perfil: 'Client' },
-            { Cliente_ID: 1003, Cliente_Clave: 'secure789', Cliente_Nombre: 'Pedro Gomez', Cliente_Status: 'Activo', Cliente_Perfil: 'Client' },
-        ];
+        // --- CONFIGURACIÓN ---
+        // ¡IMPORTANTE! Reemplaza esta URL con la URL de tu Google Apps Script Web App desplegada.
+        const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
 
         // Elementos del DOM
         const loginUsernameInput = document.getElementById('login-username');
         const loginPasswordInput = document.getElementById('login-password');
         const loginButton = document.getElementById('login-button');
-        const showRegisterFormBtn = document.getElementById('show-register-form-btn');
         const messageContainer = document.getElementById('message-container');
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
+        const showRegisterFormBtn = document.getElementById('show-register-form-btn'); // Este botón ahora está activo
+
+        // Elementos del Modal de Recuperación
+        const recoveryModal = document.getElementById('recovery-modal');
+        const closeButton = document.querySelector('.close-button');
+        const recoveryUsernameInput = document.getElementById('recovery-username');
+        const recoveryIdxInput = document.getElementById('recovery-idx');
+        const recoverPasswordButton = document.getElementById('recover-password-button');
+        const recoveryMessageContainer = document.getElementById('recovery-message-container');
 
         // Función para formatear la fecha y hora a dd/mm/aaaa hh:mm:ss
         function formatDateTime(date) {
@@ -105,40 +188,99 @@
         }
 
         // Función para mostrar mensajes
-        function showMessage(message, type) {
-            messageContainer.textContent = message;
-            messageContainer.className = `mt-8 text-center p-4 rounded-xl transition-all duration-300 ease-in-out ${type === 'success' ? 'message-success' : (type === 'error' ? 'message-error' : 'message-info')}`;
-            messageContainer.classList.remove('hidden');
+        function showMessage(container, message, type) {
+            container.textContent = message;
+            container.className = `mt-8 text-center p-4 rounded-xl transition-all duration-300 ease-in-out ${type === 'success' ? 'message-success' : (type === 'error' ? 'message-error' : 'message-info')}`;
+            container.classList.remove('hidden');
             setTimeout(() => {
-                messageContainer.classList.add('hidden');
-            }, 3000); // Ocultar después de 3 segundos
+                container.classList.add('hidden');
+            }, 5000); // Ocultar después de 5 segundos
         }
 
         // Lógica del Login
-        loginButton.addEventListener('click', () => {
-            const username = loginUsernameInput.value;
-            const password = loginPasswordInput.value;
+        loginButton.addEventListener('click', async () => {
+            const username = loginUsernameInput.value.trim();
+            const password = loginPasswordInput.value.trim();
 
-            const user = mockClientes.find(
-                (c) => c.Cliente_Nombre === username && c.Cliente_Clave === password && c.Cliente_Status === 'Activo'
-            );
+            if (!username || !password) {
+                showMessage(messageContainer, 'Por favor, ingresa tu nombre de usuario y clave.', 'error');
+                return;
+            }
 
-            if (user) {
-                // Guardar el usuario logueado en sessionStorage
-                const loggedInUserWithTimestamp = {
-                    ...user,
-                    Cliente_Data_Reg: formatDateTime(new Date()) // Formatear fecha y hora del inicio de sesión
-                };
-                sessionStorage.setItem('loggedInUser', JSON.stringify(loggedInUserWithTimestamp));
-                showMessage('¡Inicio de Sesión Exitoso! Redirigiendo...', 'success');
-                // Redirigir a la página del catálogo
-                window.location.href = 'catalog.html';
-            } else {
-                showMessage('Nombre de usuario o clave incorrectos, o usuario inactivo.', 'error');
+            showMessage(messageContainer, 'Verificando credenciales...', 'info');
+
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Guardar el usuario logueado en sessionStorage
+                    const loggedInUserWithTimestamp = {
+                        ...data.user,
+                        Cliente_Data_Reg: formatDateTime(new Date()) // Formatear fecha y hora del inicio de sesión
+                    };
+                    sessionStorage.setItem('loggedInUser', JSON.stringify(loggedInUserWithTimestamp));
+                    showMessage(messageContainer, '¡Inicio de Sesión Exitoso! Redirigiendo...', 'success');
+                    // Redirigir a la página del catálogo
+                    window.location.href = 'catalog.html';
+                } else {
+                    showMessage(messageContainer, data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error al iniciar sesión:', error);
+                showMessage(messageContainer, 'Error de conexión. Intenta de nuevo más tarde.', 'error');
             }
         });
 
-        // Navegación al formulario de registro
+        // Lógica para abrir el modal de recuperación de contraseña
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            recoveryModal.style.display = 'flex'; // Mostrar el modal
+            recoveryMessageContainer.classList.add('hidden'); // Ocultar mensajes previos
+            recoveryUsernameInput.value = '';
+            recoveryIdxInput.value = '';
+        });
+
+        // Lógica para cerrar el modal
+        closeButton.addEventListener('click', () => {
+            recoveryModal.style.display = 'none';
+        });
+
+        // Cerrar el modal si se hace clic fuera del contenido
+        window.addEventListener('click', (event) => {
+            if (event.target === recoveryModal) {
+                recoveryModal.style.display = 'none';
+            }
+        });
+
+        // Lógica de Recuperación de Contraseña
+        recoverPasswordButton.addEventListener('click', async () => {
+            const username = recoveryUsernameInput.value.trim();
+            const idx = recoveryIdxInput.value.trim();
+
+            if (!username || !idx) {
+                showMessage(recoveryMessageContainer, 'Por favor, ingresa tu nombre de usuario y Cliente ID.', 'error');
+                return;
+            }
+
+            showMessage(recoveryMessageContainer, 'Buscando contraseña...', 'info');
+
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=recoverPassword&username=${encodeURIComponent(username)}&idx=${encodeURIComponent(idx)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage(recoveryMessageContainer, `Tu clave es: ${data.password}`, 'success');
+                } else {
+                    showMessage(recoveryMessageContainer, data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error al recuperar contraseña:', error);
+                showMessage(recoveryMessageContainer, 'Error de conexión. Intenta de nuevo más tarde.', 'error');
+            }
+        });
+
+        // Navegación al formulario de registro (ya estaba presente en el código original)
         showRegisterFormBtn.addEventListener('click', () => {
             window.location.href = 'register.html';
         });
