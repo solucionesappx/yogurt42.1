@@ -29,11 +29,10 @@
             <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Registrar Nuevo Usuario</h1>
             <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto">Completa el formulario para crear una nueva cuenta.</p>
 
-            <!-- Navigation Buttons 
-            <div class="flex justify-center space-x-4 mb-8">
-                <button id="show-login-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-gray-200 text-gray-800 shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">Iniciar Sesión</button>
-                <button id="show-register-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-indigo-600 text-white shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Registrar Usuario</button>
-            </div> -->
+            <!-- Navigation Buttons -->
+            <div class="flex justify-start mb-8">
+                <button id="back-button" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-gray-200 text-gray-800 shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">Regresar</button>
+            </div>
 
             <!-- Registration Form Container -->
             <div id="registration-section" class="form-container">
@@ -89,6 +88,22 @@
         </div>
     </div>
 
+    <!-- Nuevo Modal de Confirmación para Salir/Regresar -->
+    <div id="confirm-exit-modal" class="fixed inset-0 flex items-center justify-center hidden modal-overlay">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full modal-content">
+            <h3 class="text-2xl font-bold text-red-700 text-center mb-4">¡Atención!</h3>
+            <p class="text-gray-700 text-center mb-6">Si regresas a la página de inicio, tu sesión de registro actual se perderá.</p>
+            <div class="flex justify-center space-x-4">
+                <button type="button" id="confirm-exit-accept-btn" class="btn-animation py-2.5 px-6 rounded-xl font-semibold text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    Aceptar y Salir
+                </button>
+                <button type="button" id="confirm-exit-cancel-btn" class="btn-animation py-2.5 px-6 rounded-xl font-semibold bg-gray-300 text-gray-800 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- CONFIGURACIÓN -ref DRIVE archivo: X42 Yogurt YLOC - ID: 1UJoON7v-HdnkVet0LXGYR5GnvNiSojYSoYCBUQDY8a4
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyr4qsvZq8_yVs5MfnuVmfK1mpIM4b-kuw_Y7Cc9QHdtPJ9bE0vqqbucAsWRpZqjXWw/exec'; // ¡Reemplaza con tu URL de Google Apps Script!
@@ -99,10 +114,11 @@
         const registrationModal = document.getElementById('registration-modal');
         const modalContentDetails = document.getElementById('modal-content-details');
 
-        // Navegación
-        document.getElementById('show-login-form-btn').addEventListener('click', () => {
-            window.location.href = 'index.html';
-        });
+        // Nuevos elementos del DOM para el modal de confirmación de salida
+        const confirmExitModal = document.getElementById('confirm-exit-modal');
+        const confirmExitAcceptBtn = document.getElementById('confirm-exit-accept-btn');
+        const confirmExitCancelBtn = document.getElementById('confirm-exit-cancel-btn');
+        const backButton = document.getElementById('back-button'); // Nuevo: Referencia al botón de regresar
 
         // Función para generar un UUID (ID único de cliente)
         function generateUUID() {
@@ -194,11 +210,10 @@
                 <p class="text-sm"><strong>Nombre:</strong> ${formData.nombre}</p>
                 <p class="text-sm"><strong>Correo:</strong> ${formData.correo}</p>
                 <p class="text-sm"><strong>Teléfono:</strong> ${formData.telefono}</p>
-                <p class="text-sm"><strong>Cliente IDX:</strong> ${formData.cliente_idx || 'N/A'}</p>
+                <p class="text-sm"><strong>Cédula Identidad:</strong> ${formData.cliente_idx || 'N/A'}</p>
                 <p class="text-sm"><strong>Clave:</strong> ${formData.clave}</p>
                 <p class="text-sm"><strong>ID Cliente:</strong> ${clienteId}</p>
                 <p class="text-sm"><strong>Fecha Registro:</strong> ${formData.cliente_treg}</p>
-                
             `;
             registrationModal.classList.remove('hidden');
             setTimeout(() => {
@@ -206,7 +221,7 @@
             }, 10);
         }
 
-        // Función para manejar el clic en el botón "Aceptar" del modal //*<p class="text-sm"><strong>Fecha Registro (Historia):</strong> ${formData.cliente_data_reg}</p>
+        // Función para manejar el clic en el botón "Aceptar" del modal
         function handleAcceptRegistration() {
             registrationModal.querySelector('.modal-content').classList.remove('show');
             setTimeout(() => {
@@ -283,6 +298,28 @@
                 modal.classList.add('hidden');
             }, 300);
         };
+
+        // Lógica para el botón "Regresar"
+        backButton.addEventListener('click', () => {
+            confirmExitModal.classList.remove('hidden');
+            setTimeout(() => {
+                confirmExitModal.querySelector('.modal-content').classList.add('show');
+            }, 10);
+        });
+
+        // Lógica para el botón "Aceptar y Salir" del modal de confirmación
+        confirmExitAcceptBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('loggedInUser'); // Asegurarse de limpiar cualquier sesión si existiera
+            window.location.href = 'index.html'; // Redirigir al login
+        });
+
+        // Lógica para el botón "Cancelar" del modal de confirmación
+        confirmExitCancelBtn.addEventListener('click', () => {
+            confirmExitModal.querySelector('.modal-content').classList.remove('show');
+            setTimeout(() => {
+                confirmExitModal.classList.add('hidden');
+            }, 300);
+        });
     </script>
 </body>
 </html>
