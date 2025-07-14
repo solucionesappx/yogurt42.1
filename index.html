@@ -37,13 +37,14 @@
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             width: 90%;
-            max-width: 500px; /* Ancho máximo por defecto para modales */
+            max-width: 500px;
             position: relative;
             animation: fadeIn 0.3s ease-out;
         }
-        /* Nueva clase para el contenido del modal de contraseña, con un max-width menor */
-        .password-modal-content {
+        /* Nueva clase para el contenido del modal de contraseña, con un max-width menor y posición ajustada */
+        .password-display-modal-content {
             max-width: 350px; /* Ancho máximo reducido para el modal de la contraseña */
+            transform: translateY(-50px); /* Mover 50px hacia arriba */
         }
         .close-button {
             color: #aaa;
@@ -70,8 +71,8 @@
 
     <div class="w-full max-w-lg mx-auto">
         <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-10 border border-gray-100">
-            <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">App Yogurt X42 YLOC</h1>
-            <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto">Ingresa tus credenciales para acceder 🍦🧁🧃</p>
+            <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Iniciar Sesión</h1>
+            <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto">Ingresa tus credenciales para acceder.</p>
 
             <!-- Login Form Container -->
             <div id="login-section" class="form-container">
@@ -140,46 +141,52 @@
             </div>
             <div class="mb-6">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="recovery-idx">
-                    Cédula Identidad
+                    Cédula de Identidad (CI)
                 </label>
                 <input
                     type="text"
                     id="recovery-idx"
                     class="input-focus-animation shadow appearance-none border rounded-lg w-full py-2.5 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                    placeholder="Tu CI de cliente"
+                    placeholder="CI de cliente"
                 >
             </div>
-            <div class="flex space-x-4 mb-4">
+            <div class="flex space-x-2 mb-4"> <!-- Reducido el espacio entre botones -->
                 <button
                     id="recover-password-button"
-                    class="btn-animation w-1/2 flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                    class="btn-animation w-1/3 flex items-center justify-center py-3.5 px-2 border border-transparent rounded-xl shadow-lg text-base font-semibold text-black bg-gray-300 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                 >
-                    Recuperar Contraseña
+                    Recuperación
                 </button>
                 <button
-                    id="generate-new-password-button"
-                    class="btn-animation w-1/2 flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-gray-800 bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+                    id="generate-auto-password-button" 
+                    class="btn-animation w-1/3 flex items-center justify-center py-3.5 px-2 border border-transparent rounded-xl shadow-lg text-base font-semibold text-gray-800 bg-green-300 hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-300"
                 >
-                    Generar Contraseña
+                    Automática
+                </button>
+                <button
+                    id="manual-password-button" 
+                    class="btn-animation w-1/3 flex items-center justify-center py-3.5 px-2 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-blue-300 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                    Manual
                 </button>
             </div>
             <div id="recovery-message-container" class="mt-4 text-center p-3 rounded-xl transition-all duration-300 ease-in-out hidden"></div>
         </div>
     </div>
 
-    <!-- Nuevo Modal para Mostrar Contraseña -->
+    <!-- Nuevo Modal para Mostrar/Ingresar Contraseña -->
     <div id="password-display-modal" class="modal">
-        <div class="modal-content password-modal-content">
+        <div class="modal-content password-display-modal-content"> <!-- Aquí se aplica la nueva clase -->
             <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center" id="password-display-title">Tu Contraseña</h2>
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="displayed-password">
-                    Contraseña:
+                   <span id="password-input-label">Contraseña:</span> <!-- Etiqueta dinámica -->
                 </label>
                 <input
                     type="text"
                     id="displayed-password"
                     class="shadow appearance-none border rounded-lg w-full py-2.5 px-3 text-gray-700 leading-tight bg-gray-100 cursor-text"
-                    readonly
+                    readonly <!-- Inicialmente de solo lectura -->
                 >
             </div>
             <button
@@ -192,7 +199,8 @@
     </div>
     
     <script>
-        // --- CONFIGURACIÓN --- ref DRIVE App Lectura Datos (script) - X42 Yogurt YLOC ID: 1UJoON7v-HdnkVet0LXGYR5GnvNiSojYSoYCBUQDY8a4 
+        // --- CONFIGURACIÓN --- ref DRIVE App Lectura Datos (script) - X42 Yogurt YLOC ID: 1UJoON7v-HdnkVet0LXGYR5GnvNiSojYSoYCBUQDY8a4
+        
         // ¡IMPORTANTE! Reemplaza esta URL con la URL de tu Google Apps Script Web App desplegada.
         const GOOGLE_APPS_SCRIPT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby9FHTZwiU0LRl9cxqq_r9z0b7Mb9BjEabonpHeSj5zxZvGMEG6G41Zuz0wiKheaTAr/exec';
 
@@ -210,14 +218,19 @@
         const recoveryUsernameInput = document.getElementById('recovery-username');
         const recoveryIdxInput = document.getElementById('recovery-idx');
         const recoverPasswordButton = document.getElementById('recover-password-button');
-        const generateNewPasswordButton = document.getElementById('generate-new-password-button'); // Nuevo botón
+        const generateAutoPasswordButton = document.getElementById('generate-auto-password-button'); // ID actualizado
+        const manualPasswordButton = document.getElementById('manual-password-button'); // Nuevo botón
         const recoveryMessageContainer = document.getElementById('recovery-message-container');
 
-        // Elementos del Modal de Mostrar Contraseña
+        // Elementos del Modal de Mostrar/Ingresar Contraseña
         const passwordDisplayModal = document.getElementById('password-display-modal');
         const passwordDisplayTitle = document.getElementById('password-display-title');
+        const passwordInputLabel = document.getElementById('password-input-label'); // Nueva etiqueta dinámica
         const displayedPasswordInput = document.getElementById('displayed-password');
         const acceptPasswordButton = document.getElementById('accept-password-button');
+
+        // Variable para controlar el modo del modal de contraseña
+        let currentPasswordModalMode = 'display'; // 'display' o 'manual_input'
 
         // Función para formatear la fecha y hora a dd/mm/aaaa hh:mm:ss
         function formatDateTime(date) {
@@ -231,29 +244,45 @@
         }
 
         // Función para mostrar mensajes en un contenedor específico
-        function showMessage(container, message, type) {
+        function showMessage(container, message, type, duration = 5000) {
             container.textContent = message;
             container.className = `mt-4 text-center p-3 rounded-xl transition-all duration-300 ease-in-out ${type === 'success' ? 'message-success' : (type === 'error' ? 'message-error' : 'message-info')}`;
             container.classList.remove('hidden');
             setTimeout(() => {
                 container.classList.add('hidden');
-            }, 8000); // Ocultar después de 8 segundos
+            }, duration);
         }
 
-        // Función para mostrar el modal de contraseña
-        function showPasswordDisplayModal(password, title = 'Tu Contraseña') {
+        // Función para mostrar el modal de contraseña (ahora con modo)
+        function showPasswordDisplayModal(password = '', title = 'Tu Contraseña', mode = 'display') {
             passwordDisplayTitle.textContent = title;
             displayedPasswordInput.value = password;
+            currentPasswordModalMode = mode;
+
+            // Ocultar cualquier mensaje previo del modal de recuperación
+            recoveryMessageContainer.classList.add('hidden');
+
+            if (mode === 'manual_input') {
+                passwordInputLabel.textContent = 'Nueva Contraseña (4 dígitos):';
+                displayedPasswordInput.readOnly = false;
+                displayedPasswordInput.classList.remove('bg-gray-100'); // Eliminar fondo de solo lectura
+                acceptPasswordButton.textContent = 'Aceptar';
+            } else { // 'display' mode
+                passwordInputLabel.textContent = 'Contraseña:';
+                displayedPasswordInput.readOnly = true;
+                displayedPasswordInput.classList.add('bg-gray-100'); // Añadir fondo de solo lectura
+                acceptPasswordButton.textContent = 'Aceptar';
+            }
             passwordDisplayModal.style.display = 'flex';
         }
 
-// Lógica del Login
+        // Lógica del Login
         loginButton.addEventListener('click', async () => {
             const username = loginUsernameInput.value.trim();
             const password = loginPasswordInput.value.trim();
 
             if (!username || !password) {
-                showMessage(messageContainer, 'Por favor, ingresa tu nombre de usuario y clave.', 'error', 8000); // 8 segundos para este error
+                showMessage(messageContainer, 'Por favor, ingresa tu nombre de usuario y clave.', 'error', 8000);
                 return;
             }
 
@@ -269,17 +298,20 @@
                         Cliente_Data_Reg: formatDateTime(new Date())
                     };
                     sessionStorage.setItem('loggedInUser', JSON.stringify(loggedInUserWithTimestamp));
+                    
+                    console.log('Usuario logueado y datos guardados en sessionStorage:', loggedInUserWithTimestamp);
+
                     showMessage(messageContainer, '¡Inicio de Sesión Exitoso! Redirigiendo...', 'success');
-                    window.location.href = 'catalog.html';
+                    window.location.href = './catalog.html';
                 } else {
-                    showMessage(messageContainer, data.message, 'error', 8000); // 8 segundos para este error
+                    showMessage(messageContainer, data.message, 'error', 8000);
                 }
             } catch (error) {
                 console.error('Error al iniciar sesión:', error);
-                showMessage(messageContainer, 'Error de conexión. Intenta de nuevo más tarde.', 'error', 8000); // 8 segundos para este error
+                showMessage(messageContainer, 'Error de conexión. Intenta de nuevo más tarde.', 'error', 8000);
             }
         });
-        
+
         // Lógica para abrir el modal de recuperación/generación de contraseña
         forgotPasswordLink.addEventListener('click', (e) => {
             e.preventDefault();
@@ -301,10 +333,42 @@
             }
         });
 
-        // Lógica para cerrar el modal de mostrar contraseña
-        acceptPasswordButton.addEventListener('click', () => {
-            passwordDisplayModal.style.display = 'none';
-            recoveryModal.style.display = 'none'; // También cierra el modal de recuperación
+        // Lógica para cerrar el modal de mostrar/ingresar contraseña
+        acceptPasswordButton.addEventListener('click', async () => {
+            if (currentPasswordModalMode === 'manual_input') {
+                const username = recoveryUsernameInput.value.trim();
+                const idx = recoveryIdxInput.value.trim();
+                const manualPassword = displayedPasswordInput.value.trim();
+
+                if (!/^\d{4}$/.test(manualPassword)) {
+                    showMessage(recoveryMessageContainer, 'La contraseña manual debe ser de 4 dígitos numéricos.', 'error');
+                    return; // No cierra el modal, permite corregir
+                }
+
+                showMessage(recoveryMessageContainer, 'Actualizando contraseña manualmente...', 'info');
+
+                try {
+                    const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=manualPassword&username=${encodeURIComponent(username)}&idx=${encodeURIComponent(idx)}&newPassword=${encodeURIComponent(manualPassword)}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showMessage(recoveryMessageContainer, 'Contraseña actualizada manualmente con éxito.', 'success');
+                        passwordDisplayModal.style.display = 'none';
+                        recoveryModal.style.display = 'none';
+                        // Resetear el estado del modal de contraseña a 'display' por defecto
+                        showPasswordDisplayModal('', '', 'display');
+                    } else {
+                        showMessage(recoveryMessageContainer, data.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error al actualizar contraseña manualmente:', error);
+                    showMessage(recoveryMessageContainer, 'Error de conexión al actualizar contraseña manual. Intenta de nuevo más tarde.', 'error');
+                }
+
+            } else { // Modo 'display'
+                passwordDisplayModal.style.display = 'none';
+                recoveryModal.style.display = 'none';
+            }
         });
 
         // Lógica de Recuperación de Contraseña (mostrar existente)
@@ -313,7 +377,7 @@
             const idx = recoveryIdxInput.value.trim();
 
             if (!username || !idx) {
-                showMessage(recoveryMessageContainer, 'Por favor, ingresa tu nombre de usuario y Cliente ID.', 'error');
+                showMessage(recoveryMessageContainer, 'Por favor, ingresa tu nombre de usuario y Cédula de Identidad.', 'error');
                 return;
             }
 
@@ -324,7 +388,7 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    showPasswordDisplayModal(data.password, 'Tu Contraseña Existente');
+                    showPasswordDisplayModal(data.password, 'Tu Contraseña Existente', 'display');
                     showMessage(recoveryMessageContainer, 'Contraseña recuperada con éxito.', 'success');
                 } else {
                     showMessage(recoveryMessageContainer, data.message, 'error');
@@ -335,24 +399,24 @@
             }
         });
 
-        // Lógica para Generar Nueva Contraseña
-        generateNewPasswordButton.addEventListener('click', async () => {
+        // Lógica para Generar Nueva Contraseña Automáticamente
+        generateAutoPasswordButton.addEventListener('click', async () => { // ID actualizado
             const username = recoveryUsernameInput.value.trim();
             const idx = recoveryIdxInput.value.trim();
 
             if (!username || !idx) {
-                showMessage(recoveryMessageContainer, 'Por favor, ingresa tu nombre de usuario y Cliente ID para generar una nueva clave.', 'error');
+                showMessage(recoveryMessageContainer, 'Por favor, ingresa tu nombre de usuario y Cédula de Identidad para generar una nueva clave.', 'error');
                 return;
             }
 
-            showMessage(recoveryMessageContainer, 'Generando y actualizando nueva contraseña...', 'info');
+            showMessage(recoveryMessageContainer, 'Generando y actualizando nueva contraseña automáticamente...', 'info');
 
             try {
                 const response = await fetch(`${GOOGLE_APPS_SCRIPT_WEB_APP_URL}?action=generatePassword&username=${encodeURIComponent(username)}&idx=${encodeURIComponent(idx)}`);
                 const data = await response.json();
 
                 if (data.success) {
-                    showPasswordDisplayModal(data.password, 'Tu Nueva Contraseña Generada');
+                    showPasswordDisplayModal(data.password, 'Tu Nueva Contraseña Generada', 'display');
                     showMessage(recoveryMessageContainer, 'Nueva contraseña generada y actualizada con éxito.', 'success');
                 } else {
                     showMessage(recoveryMessageContainer, data.message, 'error');
@@ -363,9 +427,25 @@
             }
         });
 
+        // Lógica para Ingresar Contraseña Manualmente
+        manualPasswordButton.addEventListener('click', () => {
+            const username = recoveryUsernameInput.value.trim();
+            const idx = recoveryIdxInput.value.trim();
+
+            if (!username || !idx) {
+                showMessage(recoveryMessageContainer, 'Por favor, ingresa tu nombre de usuario y Cédula de Identidad para establecer una clave manual.', 'error');
+                return;
+            }
+            // Abre el modal de contraseña en modo de entrada manual
+            showPasswordDisplayModal('', 'Contraseña Manual', 'manual_input');
+            // Limpia el mensaje de recuperación si lo hay
+            recoveryMessageContainer.classList.add('hidden');
+        });
+
+
         // Navegación al formulario de registro
         showRegisterFormBtn.addEventListener('click', () => {
-            window.location.href = 'register.html';
+            window.location.href = './register.html';
         });
     </script>
 </body>
