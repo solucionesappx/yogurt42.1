@@ -162,7 +162,7 @@
                         Cliente_Nombre: formDataObj.nombre,
                         Cliente_Clave: formDataObj.clave, // La clave generada
                         Cliente_Perfil: 'Client', // Por defecto, es un cliente
-                        Cliente_Status: 'Activo' // formDataObj.cliente_status, // Guardar el estado del cliente
+                        Cliente_Status: 'Activo', // formDataObj.cliente_status, // Guardar el estado del cliente
                         Cliente_Data_Reg: formDataObj.cliente_data_reg // Guardar la fecha/hora formateada
                     };
                     sessionStorage.setItem('loggedInUser', JSON.stringify(newUser));
