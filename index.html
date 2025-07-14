@@ -37,9 +37,13 @@
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             width: 90%;
-            max-width: 500px;
+            max-width: 500px; /* Ancho máximo por defecto para modales */
             position: relative;
             animation: fadeIn 0.3s ease-out;
+        }
+        /* Nueva clase para el contenido del modal de contraseña, con un max-width menor */
+        .password-modal-content {
+            max-width: 350px; /* Ancho máximo reducido para el modal de la contraseña */
         }
         .close-button {
             color: #aaa;
@@ -66,8 +70,8 @@
 
     <div class="w-full max-w-lg mx-auto">
         <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-10 border border-gray-100">
-            <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Iniciar Sesión</h1>
-            <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto">Ingresa tus credenciales para acceder.</p>
+            <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">App Yogurt X42 YLOC</h1>
+            <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto">Ingresa tus credenciales para acceder 🍦🧁🧃</p>
 
             <!-- Login Form Container -->
             <div id="login-section" class="form-container">
@@ -165,7 +169,7 @@
 
     <!-- Nuevo Modal para Mostrar Contraseña -->
     <div id="password-display-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content password-modal-content"> <!-- Aquí se añadió la nueva clase -->
             <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center" id="password-display-title">Tu Contraseña</h2>
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="displayed-password">
