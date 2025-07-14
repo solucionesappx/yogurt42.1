@@ -247,13 +247,13 @@
             passwordDisplayModal.style.display = 'flex';
         }
 
-        // Lógica del Login
+// Lógica del Login
         loginButton.addEventListener('click', async () => {
             const username = loginUsernameInput.value.trim();
             const password = loginPasswordInput.value.trim();
 
             if (!username || !password) {
-                showMessage(messageContainer, 'Por favor, ingresa tu nombre de usuario y clave.', 'error');
+                showMessage(messageContainer, 'Por favor, ingresa tu nombre de usuario y clave.', 'error', 8000); // 8 segundos para este error
                 return;
             }
 
@@ -272,14 +272,14 @@
                     showMessage(messageContainer, '¡Inicio de Sesión Exitoso! Redirigiendo...', 'success');
                     window.location.href = 'catalog.html';
                 } else {
-                    showMessage(messageContainer, data.message, 'error');
+                    showMessage(messageContainer, data.message, 'error', 8000); // 8 segundos para este error
                 }
             } catch (error) {
                 console.error('Error al iniciar sesión:', error);
-                showMessage(messageContainer, 'Error de conexión. Intenta de nuevo más tarde.', 'error');
+                showMessage(messageContainer, 'Error de conexión. Intenta de nuevo más tarde.', 'error', 8000); // 8 segundos para este error
             }
         });
-
+        
         // Lógica para abrir el modal de recuperación/generación de contraseña
         forgotPasswordLink.addEventListener('click', (e) => {
             e.preventDefault();
