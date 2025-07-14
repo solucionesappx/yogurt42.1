@@ -240,7 +240,7 @@
             // Función para poblar el dropdown de Tipo de Producto
             function populateProductTypes() {
                 const uniqueBaseDescriptions = [...new Set(mockPlanesCat.map(p => p.Plan_Cat_Descripción))];
-                productTypeSelect.innerHTML = '<option value="">Selecciona un tipo de producto</option>';
+                productTypeSelect.innerHTML = '<option value="">Selecciona producto</option>';
                 uniqueBaseDescriptions.forEach(desc => {
                     const option = document.createElement('option');
                     option.value = desc;
@@ -252,7 +252,7 @@
             // Función para poblar el dropdown de Sabor basado en el tipo de producto seleccionado
             function populateFlavors() {
                 const selectedBaseProductDescription = productTypeSelect.value;
-                flavorSelect.innerHTML = '<option value="">Selecciona un sabor</option>';
+                flavorSelect.innerHTML = '<option value="">Selecciona sabor</option>';
                 flavorSelect.disabled = true;
                 flavorInfo.classList.add('hidden');
 
