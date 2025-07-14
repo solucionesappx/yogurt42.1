@@ -427,6 +427,7 @@
                     telefono: loggedInUser.Cliente_Telefono || '',
                     clave: loggedInUser.Cliente_Clave,
                     cliente_idx: loggedInUser.Cliente_IDX || '',
+                    cliente_status: 'Activo',
                     orden_id: generateShortUUID(), // Generar Orden_ID aquí
                     productos_seleccionados_carrito: JSON.stringify(cartItems),
                     cliente_data_reg: loggedInUser.Cliente_Data_Reg || formatDateTime(new Date()) // Usar la fecha de login/registro o la actual
