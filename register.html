@@ -16,7 +16,6 @@
         .modal-overlay { background-color: rgba(0, 0, 0, 0.5); z-index: 999; }
         .modal-content { z-index: 1000; transform: translateY(-20px); opacity: 0; transition: opacity 0.3s ease-out, transform 0.3s ease-out; }
         .modal-content.show { opacity: 1; transform: translateY(0); }
-        /* Eliminadas las reglas CSS específicas para details/summary ya que no se usarán */
         .message-success { background-color: #d1fae5; border-color: #a7f3d0; color: #065f46; }
         .message-error { background-color: #fee2e2; border-color: #fca5a5; color: #991b1b; }
         .message-info { background-color: #e0f2fe; border-color: #93c5fd; color: #1e40af; }
@@ -29,16 +28,8 @@
             <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Registrar Nuevo Usuario</h1>
             <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto">Completa el formulario para crear una nueva cuenta.</p>
 
-            <!-- Navigation Buttons 
-            <div class="flex justify-center space-x-4 mb-8">
-                <button id="show-login-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-gray-200 text-gray-800 shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">Iniciar Sesión</button>
-                <button id="show-register-form-btn" class="btn-animation py-2 px-4 rounded-xl font-semibold bg-indigo-600 text-white shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Registrar Usuario</button>
-            </div> -->
-
-            <!-- Registration Form Container -->
             <div id="registration-section" class="form-container">
                 <form id="newUserForm">
-                    <!-- Sección DATOS BÁSICOS (anteriormente un <details>, ahora directamente visible) -->
                     <div id="datos-basicos-content" class="space-y-5 mb-5 rounded-xl shadow-sm border border-gray-200 bg-white p-6">
                         <h2 class="text-xl font-semibold text-gray-900 mb-4">Datos Básicos</h2>
                         <div>
@@ -90,19 +81,15 @@
     </div>
 
     <script>
-        // --- CONFIGURACIÓN -ref DRIVE (script) App Registro Datos archivo: X42 Yogurt YLOC - ID: 1UJoON7v-HdnkVet0LXGYR5GnvNiSojYSoYCBUQDY8a4
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyr4qsvZq8_yVs5MfnuVmfK1mpIM4b-kuw_Y7Cc9QHdtPJ9bE0vqqbucAsWRpZqjXWw/exec'; // ¡Reemplaza con tu URL de Google Apps Script!
+        // --- CONFIGURACIÓN - URL del Script de Google Apps ---
+        // ¡IMPORTANTE: Reemplaza con la URL de tu aplicación web desplegada de Google Apps Script!
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyr4qsvZq8_yVs5MfnuVmfK1mpIM4b-kuw_Y7Cc9QHdtPJ9bE0vqqbucAsWRpZqjXWw/exec'; 
 
         // Elementos del DOM del formulario de registro
         const newUserForm = document.getElementById('newUserForm');
         const resultContainer = document.getElementById('result-container');
         const registrationModal = document.getElementById('registration-modal');
         const modalContentDetails = document.getElementById('modal-content-details');
-
-        // Navegación
-        document.getElementById('show-login-form-btn').addEventListener('click', () => {
-            window.location.href = 'index.html';
-        });
 
         // Función para generar un UUID (ID único de cliente)
         function generateUUID() {
@@ -137,7 +124,7 @@
         }
 
         // Manejador del formulario de registro
-        newUserForm.addEventListener('submit', e => {
+        newUserForm.addEventListener('submit', async e => {
             e.preventDefault();
             const submitButton = newUserForm.querySelector('button[type="submit"]');
             setLoading(submitButton, 'Registrando...');
@@ -145,47 +132,56 @@
             const formData = new FormData(newUserForm);
             const formDataObj = Object.fromEntries(formData.entries());
 
+            // Generar cliente_id y clave en el frontend
             formDataObj.clave = generateRandomPassword();
             formDataObj.cliente_id = generateUUID();
-            formDataObj.productos_seleccionados_carrito = JSON.stringify([]); // Siempre vacío en esta página
-            formDataObj.cliente_data_reg = formatDateTime(new Date()); // Añadir fecha y hora de registro para Historia
-            formDataObj.cliente_treg = formatDateTime(new Date()); // Añadir fecha y hora de registro para Clientes
+            // Establecer el estado del cliente por defecto
+            formDataObj.cliente_status = 'Activo'; 
+            // Asegurarse de que productos_seleccionados_carrito sea un JSON string vacío para el registro de usuario
+            formDataObj.productos_seleccionados_carrito = JSON.stringify([]); 
+            formDataObj.cliente_data_reg = formatDateTime(new Date()); // Fecha y hora de registro para Historia
+            formDataObj.cliente_treg = formatDateTime(new Date()); // Fecha y hora de registro para Clientes
 
             console.log("Contenido completo del objeto JSON enviado:", formDataObj);
 
-            fetch(scriptURL, { method: 'POST', body: JSON.stringify(formDataObj) })
-                .then(response => response.json())
-                .then(responseData => {
-                    console.log('Success:', responseData);
-                    if (responseData.status === 'success') {
-                        // Guardar el nuevo usuario en sessionStorage
-                        const newUser = {
-                            Cliente_ID: formDataObj.cliente_id,
-                            Cliente_Nombre: formDataObj.nombre,
-                            Cliente_Clave: formDataObj.clave, // La clave generada
-                            Cliente_Perfil: 'Client', // Por defecto, es un cliente
-                            Cliente_Status: 'Activo', // Por defecto, esta activo
-                            Cliente_Data_Reg: formDataObj.cliente_data_reg // Guardar la fecha/hora formateada
-                        };
-                        sessionStorage.setItem('loggedInUser', JSON.stringify(newUser));
-                        showRegistrationSuccessModal(formDataObj, formDataObj.cliente_id);
-                    } else {
-                        showResult(`
-                            <h3 class="text-xl font-bold text-red-700 mb-2">Error en el Registro</h3>
-                            <p class="text-gray-700 mt-2">${responseData.message || 'No se pudo completar el registro. Inténtalo de nuevo.'}</p>
-                        `, 'error');
+            try {
+                const response = await fetch(scriptURL, { 
+                    method: 'POST', 
+                    body: JSON.stringify(formDataObj),
+                    headers: {
+                        'Content-Type': 'application/json' // Es buena práctica especificar el tipo de contenido
                     }
-                })
-                .catch(error => {
-                    console.error('Error!', error.message);
-                    showResult(`
-                        <h3 class="text-xl font-bold text-red-700 mb-2">Error en la Conexión</h3>
-                        <p class="text-gray-700 mt-2">Ocurrió un problema al conectar con el servidor. Inténtalo de nuevo más tarde o contacta soporte.</p>
-                    `, 'error');
-                })
-                .finally(() => {
-                    resetButton(submitButton, 'Registrarme');
                 });
+                const responseData = await response.json();
+
+                console.log('Success:', responseData);
+                if (responseData.status === 'success') {
+                    // Guardar el nuevo usuario en sessionStorage
+                    const newUser = {
+                        Cliente_ID: formDataObj.cliente_id,
+                        Cliente_Nombre: formDataObj.nombre,
+                        Cliente_Clave: formDataObj.clave, // La clave generada
+                        Cliente_Perfil: 'Client', // Por defecto, es un cliente
+                        Cliente_Status: formDataObj.cliente_status, // Guardar el estado del cliente
+                        Cliente_Data_Reg: formDataObj.cliente_data_reg // Guardar la fecha/hora formateada
+                    };
+                    sessionStorage.setItem('loggedInUser', JSON.stringify(newUser));
+                    showRegistrationSuccessModal(formDataObj, formDataObj.cliente_id);
+                } else {
+                    showResult(`
+                        <h3 class="text-xl font-bold text-red-700 mb-2">Error en el Registro</h3>
+                        <p class="text-gray-700 mt-2">${responseData.message || 'No se pudo completar el registro. Inténtalo de nuevo.'}</p>
+                    `, 'error');
+                }
+            } catch (error) {
+                console.error('Error en la solicitud Fetch:', error.message);
+                showResult(`
+                    <h3 class="text-xl font-bold text-red-700 mb-2">Error en la Conexión</h3>
+                    <p class="text-gray-700 mt-2">Ocurrió un problema al conectar con el servidor. Inténtalo de nuevo más tarde o contacta soporte.</p>
+                `, 'error');
+            } finally {
+                resetButton(submitButton, 'Registrarme');
+            }
         });
 
         // Función para mostrar el modal de registro con los datos
@@ -195,13 +191,12 @@
                 <p class="text-sm"><strong>Nombre:</strong> ${formData.nombre}</p>
                 <p class="text-sm"><strong>Correo:</strong> ${formData.correo}</p>
                 <p class="text-sm"><strong>Teléfono:</strong> ${formData.telefono}</p>
-                <p class="text-sm"><strong>Cliente IDX:</strong> ${formData.cliente_idx || 'N/A'}</p>
+                <p class="text-sm"><strong>Cliente CI:</strong> ${formData.cliente_idx || 'N/A'}</p>
                 <p class="text-sm"><strong>Clave:</strong> ${formData.clave}</p>
                 <p class="text-sm"><strong>ID Cliente:</strong> ${clienteId}</p>
                 <p class="text-sm"><strong>Fecha Registro:</strong> ${formData.cliente_treg}</p>   
+                <p class="text-sm"><strong>Estado Cliente:</strong> ${formData.cliente_status}</p>
                `;
-         <!--// <p class="text-sm"><strong>Fecha Registro (Historia):</strong> ${formData.cliente_data_reg}</p>
-               `; -->
             registrationModal.classList.remove('hidden');
             setTimeout(() => {
                 registrationModal.querySelector('.modal-content').classList.add('show');
@@ -209,9 +204,7 @@
         }
 
         // Función para manejar el clic en el botón "Aceptar" del modal 
-
-        
-            function handleAcceptRegistration() {
+        function handleAcceptRegistration() {
             registrationModal.querySelector('.modal-content').classList.remove('show');
             setTimeout(() => {
                 registrationModal.classList.add('hidden');
