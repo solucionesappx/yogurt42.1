@@ -535,7 +535,7 @@
                 // Posicionar el total después de la lista de productos
                 doc.text(totalOrder, 10, 80 + (splitProducts.length * 7) + 10); // Ajusta el multiplicador (7) para el espaciado entre líneas
 
-                doc.save(`Pedido_${cleanOrderId}_${cleanClientName}.pdf`);
+                doc.save(`Pedido_${orderId.replace('Orden ID: ', '')}.pdf`);
             }
 
             // Funciones de utilidad para la UI (mostrar carga, restablecer botón, mostrar resultados, modal)
