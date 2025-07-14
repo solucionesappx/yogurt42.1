@@ -8,6 +8,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Librerías para generar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         .btn-animation { transition: all 0.2s ease-in-out; }
@@ -16,7 +19,6 @@
         .modal-overlay { background-color: rgba(0, 0, 0, 0.5); z-index: 999; }
         .modal-content { z-index: 1000; transform: translateY(-20px); opacity: 0; transition: opacity 0.3s ease-out, transform 0.3s ease-out; }
         .modal-content.show { opacity: 1; transform: translateY(0); }
-        /* Eliminadas las reglas CSS específicas para details/summary ya que no se usarán */
         .message-success { background-color: #d1fae5; border-color: #a7f3d0; color: #065f46; }
         .message-error { background-color: #fee2e2; border-color: #fca5a5; color: #991b1b; }
         .message-info { background-color: #e0f2fe; border-color: #93c5fd; color: #1e40af; }
@@ -24,7 +26,6 @@
 </head>
 <body class="bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center min-h-screen p-4">
 
-     <!-- <div class="w-full max-w-lg mx-auto"> -->
      <div class="w-full max-w-2xl mx-auto">
         <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-10 border border-gray-100">
             <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Seleccionar Productos</h1>
@@ -115,9 +116,14 @@
                 <div id="modal-content-details" class="text-left bg-green-50 text-green-800 p-4 rounded-lg space-y-2 mb-6">
                     <!-- Los detalles del registro se insertarán aquí por JavaScript -->
                 </div>
-                <button type="button" onclick="handleAcceptRegistration()" class="btn-animation w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Aceptar
-                </button>
+                <div class="flex justify-center space-x-4">
+                    <button type="button" id="generate-pdf-button" class="btn-animation w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        Generar Etiqueta PDF 🏷️
+                    </button>
+                    <button type="button" onclick="handleAcceptRegistration()" class="btn-animation w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Aceptar
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -149,11 +155,16 @@
             const resultContainer = document.getElementById('result-container');
             const registrationModal = document.getElementById('registration-modal');
             const modalContentDetails = document.getElementById('modal-content-details');
+            const modalTitleElement = document.getElementById('modal-title');
+            const modalMessageElement = document.getElementById('modal-message'); // Asegúrate de que este elemento exista en tu HTML
 
             // Nuevos elementos del DOM para el modal de confirmación de salida
             const confirmExitModal = document.getElementById('confirm-exit-modal');
             const confirmExitAcceptBtn = document.getElementById('confirm-exit-accept-btn');
             const confirmExitCancelBtn = document.getElementById('confirm-exit-cancel-btn');
+
+            // Nuevo elemento del DOM para el botón de PDF
+            const generatePdfButton = document.getElementById('generate-pdf-button');
 
 
             // Elementos del DOM del selector de catálogo y carrito
@@ -492,6 +503,41 @@
                 }, 300);
             };
 
+            // Función para generar el PDF
+            async function generateOrderPdf() {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Asegúrate de que los elementos del DOM estén disponibles
+                const clientNameElement = modalContentDetails.querySelector('p:nth-child(1)');
+                const orderIdElement = modalContentDetails.querySelector('p:nth-child(2)');
+                const productsListElement = modalContentDetails.querySelector('ul');
+                const totalOrderElement = modalContentDetails.querySelector('p:nth-child(5)');
+
+                // Verifica que los elementos no sean nulos antes de intentar acceder a textContent
+                const clientName = clientNameElement ? clientNameElement.textContent : 'N/A';
+                const orderId = orderIdElement ? orderIdElement.textContent : 'N/A';
+                const productsList = productsListElement ? productsListElement.innerText : 'No hay productos';
+                const totalOrder = totalOrderElement ? totalOrderElement.textContent : 'Total: N/A';
+
+                doc.setFontSize(20);
+                doc.text("Detalle de la Selección de Productos", 10, 20);
+
+                doc.setFontSize(12);
+                doc.text(clientName, 10, 40);
+                doc.text(orderId, 10, 50);
+                doc.text("Productos Seleccionados:", 10, 70);
+
+                // Dividir el texto de los productos para que quepa en la página
+                const splitProducts = doc.splitTextToSize(productsList, 180); // Ajusta el ancho según sea necesario
+                doc.text(splitProducts, 10, 80);
+
+                // Posicionar el total después de la lista de productos
+                doc.text(totalOrder, 10, 80 + (splitProducts.length * 7) + 10); // Ajusta el multiplicador (7) para el espaciado entre líneas
+
+                doc.save(`Pedido_${orderId.replace('Orden ID: ', '')}.pdf`);
+            }
+
             // Funciones de utilidad para la UI (mostrar carga, restablecer botón, mostrar resultados, modal)
             function setLoading(button, text) {
                 button.disabled = true;
@@ -582,6 +628,7 @@
             // Event Listeners
             productTypeSelect.addEventListener('change', populateFlavors);
             addToCartButton.addEventListener('click', addProductToCart);
+            generatePdfButton.addEventListener('click', generateOrderPdf); // Nuevo event listener para el botón de PDF
             
             // Modificado: Al hacer clic en "Regresar", muestra el modal de confirmación
             backButton.addEventListener('click', () => {
