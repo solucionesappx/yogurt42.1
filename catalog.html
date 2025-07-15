@@ -353,12 +353,14 @@
                     };
                     cartItems.push(cartItem);
                     renderCartTable();
-                    showCartMessage('Producto añadido al carrito.', 'success');
-
+                    
                     productTypeSelect.value = '';
                     hasSugarCheckbox.checked = false;
                     quantityInput.value = '1';
                     populateFlavors();
+
+                    showCartMessage('Producto añadido al carrito.', 'success');
+                    
                 } else {
                     showCartMessage('La combinación de producto y sabor no existe en el catálogo.', 'error');
                 }
