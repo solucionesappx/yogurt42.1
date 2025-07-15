@@ -28,7 +28,7 @@
 
      <div class="w-full max-w-2xl mx-auto">
         <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-10 border border-gray-100">
-            <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Seleccionar Productos2</h1>
+            <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-3">Seleccionar Productos</h1>
             <p class="text-center text-gray-500 mb-8 max-w-sm mx-auto" id="welcome-message">Bienvenido, Cliente.</p>
 
             <!-- Botón para regresar a la página anterior -->
@@ -68,8 +68,10 @@
                                 Añadir al Carrito
                             </button>
 
-                            <div id="cart-message-container" class="mt-4 text-center p-3 rounded-lg hidden border"></div>
-
+                       <!-- Se mueve a la línea 98 para que el mensaje aparezca después de la tabla carrito
+                            <div id="cart-message-container" class="mt-4 text-center p-3 rounded-lg hidden border"></div>  
+                       -->
+                        
                             <h4 class="text-lg font-semibold text-gray-800 mt-6 mb-3">Productos en el Carrito:</h4>
                             <div class="overflow-x-auto">
                                 <table class="min-w-full bg-white border border-gray-200 rounded-lg">
@@ -95,6 +97,8 @@
                                     </tfoot>
                                 </table>
                             </div>
+                        <!-- El contenedor de mensajes del carrito se ha movido aquí, después de la tabla -->    
+                        <div id="cart-message-container" class="mt-4 text-center p-3 rounded-lg hidden border"></div> 
                         </div>
                     </div>
 
