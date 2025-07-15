@@ -362,7 +362,9 @@
                     hasSugarCheckbox.checked = false;
                     quantityInput.value = '1';
                     populateFlavors();
-                                 
+
+                    showCartMessage('Producto añadido al carrito.', 'success');
+                    
                 } else {
                     showCartMessage('La combinación de producto y sabor no existe en el catálogo.', 'error');
                 }
@@ -420,9 +422,7 @@
                 e.preventDefault();
                 const submitButton = productSelectionForm.querySelector('button[type="submit"]');
                 setLoading(submitButton, 'Registrando Selección...');
-
-                showCartMessage('Producto añadido al carrito.', 'success');
-                
+                               
                 if (cartItems.length === 0) {
                     showResult('El carrito está vacío. Por favor, agrega productos antes de realizar un pedido.', 'info');
                     resetButton(submitButton, 'Registrar Selección');
